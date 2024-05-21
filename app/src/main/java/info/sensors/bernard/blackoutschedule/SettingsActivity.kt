@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.SeekBar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -60,9 +61,6 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         val click = MediaPlayer.create(this, R.raw.button_sound)
         bindMusicService()
-        val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
-        val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
-        click.setVolume(clickSound, clickSound)
 
 //        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
 //        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
@@ -71,14 +69,69 @@ class SettingsActivity : AppCompatActivity() {
 //        layoutParams.screenBrightness = Brigthness
 //        window.attributes = layoutParams
 
-        val buttonQuest: ImageButton = findViewById(R.id.questButton)
+        val buttonQuest: ImageButton = findViewById(R.id.questButtonSettings)
+        val buttonBack: ImageButton = findViewById(R.id.backButton)
 
+
+        val seekBarSound: SeekBar = findViewById(R.id.soundSeekBar)
+        val seekBarMusic: SeekBar = findViewById(R.id.musicSeekBar)
+
+        val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
+
+        val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
+        click.setVolume(clickSound, clickSound)
+        seekBarSound.progress = (clickSound * 100).toInt()
+        seekBarSound.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val soundValue = seekBarSound.progress / 100f
+                click.setVolume(soundValue, soundValue)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                click.start()
+                click.seekTo(0)
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val soundValue = seekBarSound.progress / 100f
+                click.setVolume(soundValue, soundValue)
+                val editor = sharedPreferencesForMusic.edit()
+                editor.putFloat("buttonSound", soundValue)
+                editor.apply()
+            }
+        })
+
+        val sound = sharedPreferencesForMusic.getInt("musicSound", 100)
+        setVolume(sound)
+        seekBarMusic.progress = sound
+        seekBarMusic.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                setVolume(seekBarMusic.progress)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                click.start()
+                click.seekTo(0)
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                setVolume(seekBarMusic.progress)
+                val editor2 = sharedPreferencesForMusic.edit()
+                editor2.putInt("musicSound", seekBarMusic.progress)
+                editor2.apply()
+            }
+        })
 
         buttonQuest.setOnClickListener {
             click.start()
             click.seekTo(0)
+            // TODO тут мав би бути код для підказки в налаштуваннях
         }
-
+        buttonBack.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            goToNewActivity = true
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
 
         hideUi()
     }

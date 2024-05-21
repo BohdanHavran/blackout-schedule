@@ -74,11 +74,58 @@ class MainActivity : AppCompatActivity() {
 //        window.attributes = layoutParams
 
         val buttonQuest: ImageButton = findViewById(R.id.questButton)
+        val buttonSettings: ImageButton = findViewById(R.id.settingsButton)
+        val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
+        val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
+        val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
+
+
+
+
+
+
+
+
+
+
 
 
         buttonQuest.setOnClickListener {
             click.start()
             click.seekTo(0)
+            // TODO тут мав би бути код для підказки
+        }
+        buttonSettings.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            goToNewActivity = true
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
+        buttonFirstGroup.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            buttonFirstGroup.alpha = 1f
+            buttonSecondGroup.alpha = 0.5f
+            buttonThirdGroup.alpha = 0.5f
+            // TODO тут мав би бути код для вибору 1 групи
+        }
+        buttonSecondGroup.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            buttonFirstGroup.alpha = 0.5f
+            buttonSecondGroup.alpha = 1f
+            buttonThirdGroup.alpha = 0.5f
+            // TODO тут мав би бути код для вибору 2 групи
+        }
+        buttonThirdGroup.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            buttonFirstGroup.alpha = 0.5f
+            buttonSecondGroup.alpha = 0.5f
+            buttonThirdGroup.alpha = 1f
+            // TODO тут мав би бути код для вибору 3 групи
         }
 
 
