@@ -11,12 +11,15 @@ import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 
-class MainActivity : AppCompatActivity() {
+class AuthActivity : AppCompatActivity() {
     private var goToNewActivity = false
     private var musicService: MusicService? = null
     private var isBound = false
@@ -57,14 +60,52 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_auth)
         val click = MediaPlayer.create(this, R.raw.button_sound)
-        val serviceIntent = Intent(this, MusicService::class.java)
-        startService(serviceIntent)
+//        val serviceIntent = Intent(this, MusicService::class.java)
+//        startService(serviceIntent)
         bindMusicService()
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
         click.setVolume(clickSound, clickSound)
+
+        val buttonRegister: ImageButton = findViewById(R.id.registerButton)
+        val buttonAuth: ImageButton = findViewById(R.id.authButton)
+
+        val buttonCreateAccount: ImageButton = findViewById(R.id.createAccountButton)
+        val buttonBackAuth: ImageButton = findViewById(R.id.backAuthButton)
+
+        val inputLogin: EditText = findViewById(R.id.loginInput)
+        val inputPassword: EditText = findViewById(R.id.passwordInput)
+
+        val textButtonRegister: TextView = findViewById(R.id.registerButtonText)
+        val textButtonAuth: TextView = findViewById(R.id.authButtonText)
+        val textButtonCreateAccount: TextView = findViewById(R.id.createAccountButtonText)
+        val textButtonBackAuth: TextView = findViewById(R.id.backAuthButtonText)
+
+        buttonRegister.setOnClickListener {
+
+            inputLogin.setHint("Створіть email")
+            inputPassword.setHint("Створіть пароль")
+
+//            buttonRegister.alpha = 0f
+//            buttonAuth.alpha = 0f
+//            textButtonRegister.alpha = 0f
+//            textButtonAuth.alpha = 0f
+
+            buttonCreateAccount.isVisible = true
+            buttonBackAuth.isVisible = true
+            textButtonCreateAccount.isVisible = true
+            textButtonBackAuth.isVisible = true
+
+        }
+
+        buttonBackAuth.setOnClickListener {
+            buttonCreateAccount.isVisible = false
+            buttonBackAuth.isVisible = false
+            textButtonCreateAccount.isVisible = false
+            textButtonBackAuth.isVisible = false
+        }
 
 //        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
 //        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
@@ -73,63 +114,6 @@ class MainActivity : AppCompatActivity() {
 //        layoutParams.screenBrightness = Brigthness
 //        window.attributes = layoutParams
 
-        val buttonQuest: ImageButton = findViewById(R.id.questButton)
-        val buttonSettings: ImageButton = findViewById(R.id.settingsButton)
-        val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
-        val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
-        val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
-
-
-
-
-
-
-
-
-
-
-
-
-        buttonQuest.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            goToNewActivity = true
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
-            // TODO тут мав би бути код для підказки
-        }
-        buttonSettings.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            goToNewActivity = true
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        }
-        buttonFirstGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 1f
-            buttonSecondGroup.alpha = 0.5f
-            buttonThirdGroup.alpha = 0.5f
-            // TODO тут мав би бути код для вибору 1 групи
-        }
-        buttonSecondGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 0.5f
-            buttonSecondGroup.alpha = 1f
-            buttonThirdGroup.alpha = 0.5f
-            // TODO тут мав би бути код для вибору 2 групи
-        }
-        buttonThirdGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 0.5f
-            buttonSecondGroup.alpha = 0.5f
-            buttonThirdGroup.alpha = 1f
-            // TODO тут мав би бути код для вибору 3 групи
-        }
 
 
         hideUi()
