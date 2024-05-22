@@ -3,5 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="bg_black_theme_color">#FF00162B</color>
+    <color name="black_button_text">#FFB2C9F5</color>
 <!--    <color name="bg_black_theme_color">#FF162BFF</color>-->
 </resources>
