@@ -127,8 +127,8 @@ class SettingsActivity : AppCompatActivity() {
             click.start()
             click.seekTo(0)
             goToNewActivity = true
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            //val intent = Intent(this, MainActivity::class.java)
+            //startActivity(intent)
             finish()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
