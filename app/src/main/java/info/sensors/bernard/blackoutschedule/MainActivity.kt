@@ -9,9 +9,11 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -66,13 +68,14 @@ class MainActivity : AppCompatActivity() {
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
         click.setVolume(clickSound, clickSound)
 
-//        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
-//        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
-//        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-//        val layoutParams = window.attributes
-//        layoutParams.screenBrightness = Brigthness
-//        window.attributes = layoutParams
-
+        val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
+        if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
+            val brightnessValue = sharedPreferencesBrightness.getFloat("brightnessValue", 1f)
+            val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val layoutParams = window.attributes
+            layoutParams.screenBrightness = brightnessValue
+            window.attributes = layoutParams
+        }
         val buttonQuest: ImageButton = findViewById(R.id.questButton)
         val buttonSettings: ImageButton = findViewById(R.id.settingsButton)
         val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
@@ -104,6 +107,7 @@ class MainActivity : AppCompatActivity() {
             goToNewActivity = true
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+            finish()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
         buttonFirstGroup.setOnClickListener {

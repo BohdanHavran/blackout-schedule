@@ -69,6 +69,15 @@ class AuthActivity : AppCompatActivity() {
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
         click.setVolume(clickSound, clickSound)
 
+        val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
+        if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
+            val brightnessValue = sharedPreferencesBrightness.getFloat("brightnessValue", 1f)
+            val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val layoutParams = window.attributes
+            layoutParams.screenBrightness = brightnessValue
+            window.attributes = layoutParams
+        }
+
         val buttonRegister: ImageButton = findViewById(R.id.registerButton)
         val buttonAuth: ImageButton = findViewById(R.id.authButton)
 
