@@ -201,7 +201,7 @@
         app:layout_constraintVertical_bias="0.04" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/brightnesSwitchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -217,11 +217,11 @@
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton"
-        app:layout_constraintEnd_toEndOf="@+id/imageButton"
+        app:layout_constraintBottom_toBottomOf="@+id/brightnesSwitchButton"
+        app:layout_constraintEnd_toEndOf="@+id/brightnesSwitchButton"
         app:layout_constraintHorizontal_bias="0.90"
-        app:layout_constraintStart_toStartOf="@+id/imageButton"
-        app:layout_constraintTop_toTopOf="@+id/imageButton"
+        app:layout_constraintStart_toStartOf="@+id/brightnesSwitchButton"
+        app:layout_constraintTop_toTopOf="@+id/brightnesSwitchButton"
         app:srcCompat="@drawable/black_switch" />
 
     <SeekBar

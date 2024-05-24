@@ -1,5 +1,6 @@
 package info.sensors.bernard.blackoutschedule
 
+import android.animation.ValueAnimator
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,10 @@ import android.os.IBinder
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -68,13 +72,18 @@ class SettingsActivity : AppCompatActivity() {
 //        val layoutParams = window.attributes
 //        layoutParams.screenBrightness = Brigthness
 //        window.attributes = layoutParams
+        val imageBrightness: ImageView = findViewById(R.id.imageView2)
 
         val buttonQuest: ImageButton = findViewById(R.id.questButtonSettings)
         val buttonBack: ImageButton = findViewById(R.id.backButton)
-
+        val buttonBrightness: ImageButton = findViewById(R.id.brightnesSwitchButton)
 
         val seekBarSound: SeekBar = findViewById(R.id.soundSeekBar)
         val seekBarMusic: SeekBar = findViewById(R.id.musicSeekBar)
+        val seekBarBrightness: SeekBar = findViewById(R.id.brightnesSeekBar)
+
+        val textBrightnessZero: TextView = findViewById(R.id.textView742)
+        val textBrightnessHundred: TextView = findViewById(R.id.textView7244)
 
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
 
@@ -118,6 +127,64 @@ class SettingsActivity : AppCompatActivity() {
             }
         })
 
+
+        val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
+        var brightnessSwitchState = sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)
+        if (!brightnessSwitchState){
+            val params = imageBrightness.layoutParams as ConstraintLayout.LayoutParams
+            params.horizontalBias = 0.05f
+            imageBrightness.layoutParams = params
+            seekBarBrightness.alpha = 0.5f
+            textBrightnessZero.alpha = 0.5f
+            textBrightnessHundred.alpha = 0.5f
+            seekBarBrightness.isEnabled = false
+            textBrightnessZero.isEnabled = false
+            textBrightnessHundred.isEnabled = false
+
+        }
+        else{
+            val params = imageBrightness.layoutParams as ConstraintLayout.LayoutParams
+            params.horizontalBias = 0.95f
+            imageBrightness.layoutParams = params
+            seekBarBrightness.alpha = 1f
+            textBrightnessZero.alpha = 1f
+            textBrightnessHundred.alpha = 1f
+            seekBarBrightness.isEnabled = true
+            textBrightnessZero.isEnabled = true
+            textBrightnessHundred.isEnabled = true
+        }
+        buttonBrightness.setOnClickListener {
+            brightnessSwitchState = sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)
+            brightnessSwitchState = if (brightnessSwitchState){
+                switchOff()
+                seekBarBrightness.alpha = 0.5f
+                textBrightnessZero.alpha = 0.5f
+                textBrightnessHundred.alpha = 0.5f
+                seekBarBrightness.isEnabled = false
+                textBrightnessZero.isEnabled = false
+                textBrightnessHundred.isEnabled = false
+                false
+            }
+            else{
+                switchOn()
+                seekBarBrightness.alpha = 1f
+                textBrightnessZero.alpha = 1f
+                textBrightnessHundred.alpha = 1f
+                seekBarBrightness.isEnabled = true
+                textBrightnessZero.isEnabled = true
+                true
+            }
+            val editor = sharedPreferencesBrightness.edit()
+            editor.putBoolean("isUsingManualBrightness", brightnessSwitchState)
+            editor.apply()
+        }
+
+
+
+
+
+
+
         buttonQuest.setOnClickListener {
             click.start()
             click.seekTo(0)
@@ -136,7 +203,43 @@ class SettingsActivity : AppCompatActivity() {
         hideUi()
     }
 
+    private fun switchOn(animationDuration: Long = 1L){
+        val imageBrightness: ImageView = findViewById(R.id.imageView2)
 
+        val params = imageBrightness.layoutParams as ConstraintLayout.LayoutParams
+        val animator = ValueAnimator.ofFloat(params.horizontalBias, 0.95f)
+        animator.duration = animationDuration
+        animator.addUpdateListener { animation ->
+            val animatedValue = animation.animatedValue as Float
+            params.horizontalBias = animatedValue
+            imageBrightness.layoutParams = params
+        }
+        animator.start()
+
+
+    }
+    private fun switchOff(animationDuration: Long = 1L){
+        val imageBrightness: ImageView = findViewById(R.id.imageView2)
+
+        val params = imageBrightness.layoutParams as ConstraintLayout.LayoutParams
+        val animator = ValueAnimator.ofFloat(params.horizontalBias, 0.05f)
+        animator.duration = animationDuration
+        animator.addUpdateListener { animation ->
+            val animatedValue = animation.animatedValue as Float
+            params.horizontalBias = animatedValue
+            imageBrightness.layoutParams = params
+        }
+        animator.start()
+
+//        val params2 = imageBrightness.layoutParams as ConstraintLayout.LayoutParams
+//        val animator2 = ValueAnimator.ofFloat(params.horizontalBias, 0.05f)
+//        animator2.duration = animationDuration
+//        animator2.addUpdateListener { animation ->
+//            val animatedValue = animation.animatedValue as Float
+//        }
+//        animator2.start()
+
+    }
 
 
     override fun onPause() {
