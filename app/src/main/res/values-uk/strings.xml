@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Your App Name</string>
+    <string name="setting_brightness_text">Яскравсіть програми</string>
+    <string name="settings_button_sound_text">Гучність натискання кнопки</string>
+    <string name="settings_music_text">Гучність фонової музики</string>
+    <string name="settings_brightness_switch_text">Ручне налаштування яскравості</string>
+    <string name="settings_fade_text">Зміна плавності переходу</string>
+    <string name="settings_language_text">Мова програми</string>
+    <string name="settinds_back_text">Повернутись</string>
+    <string name="main_bs_text">Графік відключення світла</string>
+    <string name="main_region_text">львівська область</string>
+    <string name="main_disconnect_text">"До відключення "</string>
+    <string name="main_saved_text">Зекономлено</string>
+    <string name="main_account_button_text">Аккаунт</string>
+    <string name="main_settings_button_text">Налаштування</string>
+</resources>

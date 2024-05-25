@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Blackout Schedule</string>
+    <string name="setting_brightness_text">Program brightness</string>
+    <string name="settings_button_sound_text">Button click volume</string>
+    <string name="settings_music_text">Background music volume</string>
+    <string name="settings_brightness_switch_text">Manual brightness adjustment</string>
+    <string name="settings_fade_text">Changing the smoothness of the transition</string>
+    <string name="settings_language_text">Program language</string>
+    <string name="settinds_back_text">Back</string>
+    <string name="main_bs_text">Blackout schedule</string>
+    <string name="main_region_text">Lviv region</string>
+    <string name="main_disconnect_text">Before disconnection</string>
+    <string name="main_saved_text">Saved</string>
+    <string name="main_account_button_text">Account</string>
+    <string name="main_settings_button_text">Settings</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import java.util.Locale
 
 class SettingsActivity : AppCompatActivity() {
     private var goToNewActivity = false
@@ -62,22 +64,50 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferencesForLanguage = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+//        val language = sharedPreferencesForLanguage.getString("My_Lang", "en")
+//        setLocale(this, language!!)
+        val language = sharedPreferencesForLanguage.getString("My_Lang", "deff")
+        if (language != "deff"){
+            setLocale(this, language!!)
+        }
         setContentView(R.layout.activity_settings)
         val click = MediaPlayer.create(this, R.raw.button_sound)
         bindMusicService()
+
+
 
         val imageBrightness: ImageView = findViewById(R.id.imageView2)
 
         val buttonQuest: ImageButton = findViewById(R.id.questButtonSettings)
         val buttonBack: ImageButton = findViewById(R.id.backButton)
         val buttonBrightness: ImageButton = findViewById(R.id.brightnesSwitchButton)
+        val buttonUa: ImageButton = findViewById(R.id.uaFlagButton)
+        val buttonPl: ImageButton = findViewById(R.id.plFlagButton)
+        val buttonUsa: ImageButton = findViewById(R.id.usaFlagButton)
 
         val seekBarSound: SeekBar = findViewById(R.id.soundSeekBar)
         val seekBarMusic: SeekBar = findViewById(R.id.musicSeekBar)
         val seekBarBrightness: SeekBar = findViewById(R.id.brightnesSeekBar)
+        val seekBarForFade: SeekBar = findViewById(R.id.smoothnesSeekBar)
 
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
 
+        if (language == "en"){
+            buttonUa.alpha = 0.5f
+            buttonPl.alpha = 0.5f
+            buttonUsa.alpha = 1f
+        }
+        else if (language == "pl"){
+            buttonUa.alpha = 0.5f
+            buttonPl.alpha = 1f
+            buttonUsa.alpha = 0.5f
+        }
+        else{
+            buttonUa.alpha = 1f
+            buttonPl.alpha = 0.5f
+            buttonUsa.alpha = 0.5f
+        }
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
         click.setVolume(clickSound, clickSound)
         seekBarSound.progress = (clickSound * 100).toInt()
@@ -180,6 +210,33 @@ class SettingsActivity : AppCompatActivity() {
             }
         })
 
+
+        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
+        val fadeStatus = sharedPreferencesForFade.getInt("fadeStatus", 50)
+
+        seekBarForFade.progress = fadeStatus
+        seekBarForFade.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                click.start()
+                click.seekTo(0)
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val fadeNewStatus = seekBarForFade.progress
+
+
+                val editor = sharedPreferencesForFade.edit()
+                editor.putInt("fadeStatus", fadeNewStatus)
+                editor.apply()
+
+            }
+        })
+
+
+
         buttonQuest.setOnClickListener {
             click.start()
             click.seekTo(0)
@@ -191,13 +248,46 @@ class SettingsActivity : AppCompatActivity() {
             goToNewActivity = true
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+            }
             finish()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
+
+
+
+
+        buttonUa.setOnClickListener {changeLanguage("uk") }
+        buttonPl.setOnClickListener { changeLanguage("uk") }
+        buttonUsa.setOnClickListener { changeLanguage("en") }
+
+
 
         hideUi()
     }
-
+    private fun changeLanguage(language: String) {
+        setLocale(this, language)
+        saveLocale(language)
+        startActivity(Intent(this, SettingsActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        finish()
+    }
+    private fun setLocale(context: Context, language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+    }
+    private fun saveLocale(language: String) {
+        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("My_Lang", language)
+        editor.apply()
+    }
     private fun switchOn(animationDuration: Long = 1L): Boolean{
         val imageBrightness: ImageView = findViewById(R.id.imageView2)
 
