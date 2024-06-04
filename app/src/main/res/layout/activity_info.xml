@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InfoActivity">
+
+    <ImageView
+        android:id="@+id/AccActivityBackgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@color/bg_black_theme_color" />
+
+    <ImageView
+        android:id="@+id/AccLogoBackgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/black_futer" />
+
+    <ImageView
+        android:id="@+id/AccLogoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintStart_toStartOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.529"
+        app:srcCompat="@drawable/black_logo_bs" />
+
+    <ImageView
+        android:id="@+id/InfoBackgroundImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.40000000"
+        app:srcCompat="@drawable/info_background" />
+
+    <ImageButton
+        android:id="@+id/InfoBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintStart_toStartOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/info_button_background" />
+
+    <TextView
+        android:id="@+id/InfoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ЩО ТУТ РОБИТИ?"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/InfoBackButton"
+        app:layout_constraintEnd_toStartOf="@+id/InfoImageView"
+        app:layout_constraintHorizontal_bias="0.17"
+        app:layout_constraintStart_toStartOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.04800002" />
+
+    <ImageView
+        android:id="@+id/InfoImageView"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/InfoBackButton"
+        app:layout_constraintEnd_toEndOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintHorizontal_bias="0.91"
+        app:layout_constraintStart_toStartOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.04000002"
+        app:srcCompat="@drawable/black_info_quest" />
+
+    <TextView
+        android:id="@+id/InfoDescTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Нічого."
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintBottom_toTopOf="@+id/InfoBackButton"
+        app:layout_constraintEnd_toEndOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintHorizontal_bias="0.08"
+        app:layout_constraintStart_toStartOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintTop_toBottomOf="@+id/InfoTextView"
+        app:layout_constraintVertical_bias="0.060000002" />
+
+    <TextView
+        android:id="@+id/InfoBackButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ДОПОБАЧЕННЯ"
+        android:textColor="@color/bg_black_theme_color"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/InfoBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="@+id/InfoBackButton"
+        app:layout_constraintStart_toStartOf="@+id/InfoBackButton"
+        app:layout_constraintTop_toTopOf="@+id/InfoBackButton" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

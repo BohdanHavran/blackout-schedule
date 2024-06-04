@@ -4,23 +4,22 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import java.util.Locale
+import androidx.core.view.isVisible
 
-class MainActivity : AppCompatActivity() {
+class InfoActivity : AppCompatActivity() {
     private var goToNewActivity = false
     private var musicService: MusicService? = null
     private var isBound = false
@@ -61,22 +60,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        setContentView(R.layout.activity_main)
-
+        setContentView(R.layout.activity_info)
         val click = MediaPlayer.create(this, R.raw.button_sound)
-        val serviceIntent = Intent(this, MusicService::class.java)
-
-        startService(serviceIntent)
+//        val serviceIntent = Intent(this, MusicService::class.java)
+//        startService(serviceIntent)
         bindMusicService()
-
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
-        val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
-
         click.setVolume(clickSound, clickSound)
-        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
 
+        val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
         if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
             val brightnessValue = sharedPreferencesBrightness.getFloat("brightnessValue", 1f)
             val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -85,73 +78,20 @@ class MainActivity : AppCompatActivity() {
             window.attributes = layoutParams
         }
 
-        val buttonQuest: ImageButton = findViewById(R.id.questButton)
-        val buttonSettings: ImageButton = findViewById(R.id.settingsButton)
-        val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
-        val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
-        val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
+        val backButton: ImageButton = findViewById(R.id.InfoBackButton)
 
-
-
-
-
-
-
-
-
-
-
-
-        buttonQuest.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            goToNewActivity = true
-            val intent = Intent(this, AccountActivity::class.java)
-            startActivity(intent)
-            // TODO тут мав би бути код для підказки
-        }
-
-        buttonSettings.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            goToNewActivity = true
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
-                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
-                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
-                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
-            }
+        backButton.setOnClickListener {
             finish()
         }
 
-        buttonFirstGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 1f
-            buttonSecondGroup.alpha = 0.5f
-            buttonThirdGroup.alpha = 0.5f
-            // TODO тут мав би бути код для вибору 1 групи
-        }
+//        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
+//        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
+//        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//        val layoutParams = window.attributes
+//        layoutParams.screenBrightness = Brigthness
+//        window.attributes = layoutParams
 
-        buttonSecondGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 0.5f
-            buttonSecondGroup.alpha = 1f
-            buttonThirdGroup.alpha = 0.5f
-            // TODO тут мав би бути код для вибору 2 групи
-        }
 
-        buttonThirdGroup.setOnClickListener {
-            click.start()
-            click.seekTo(0)
-            buttonFirstGroup.alpha = 0.5f
-            buttonSecondGroup.alpha = 0.5f
-            buttonThirdGroup.alpha = 1f
-            // TODO тут мав би бути код для вибору 3 групи
-        }
 
         hideUi()
     }
@@ -159,19 +99,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun setLocale(context: Context, language: String) {
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.setLocale(locale)
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
-    }
-    private fun saveLocale(language: String) {
-        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("My_Lang", language)
-        editor.apply()
-    }
     override fun onPause() {
         super.onPause()
         hideUi()

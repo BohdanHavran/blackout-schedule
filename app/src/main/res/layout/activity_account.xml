@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InfoActivity">
+
+    <ImageView
+        android:id="@+id/AccActivityBackgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@color/bg_black_theme_color" />
+
+    <ImageView
+        android:id="@+id/AccLogoBackgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/black_futer" />
+
+    <ImageView
+        android:id="@+id/AccLogoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintStart_toStartOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.529"
+        app:srcCompat="@drawable/black_logo_bs" />
+
+    <ImageView
+        android:id="@+id/AccEmailImageView"
+        android:layout_width="220dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintTop_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.1"
+        app:srcCompat="@drawable/black_plain_text_background_auth" />
+
+    <EditText
+        android:id="@+id/AccEmailInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Ваш email"
+        android:inputType="text"
+        android:textColor="#BCD3FF"
+        app:layout_constraintBottom_toBottomOf="@+id/AccEmailImageView"
+        app:layout_constraintEnd_toEndOf="@+id/AccEmailImageView"
+        app:layout_constraintStart_toStartOf="@+id/AccEmailImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccEmailImageView" />
+
+    <ImageButton
+        android:id="@+id/editEmailButton"
+        android:layout_width="105dp"
+        android:layout_height="36dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.31"
+        app:layout_constraintStart_toEndOf="@+id/AccEmailImageView"
+        app:layout_constraintTop_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.1"
+        app:srcCompat="@drawable/black_button" />
+
+    <TextView
+        android:id="@+id/editEmailButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Змінити"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editEmailButton"
+        app:layout_constraintEnd_toEndOf="@+id/editEmailButton"
+        app:layout_constraintStart_toStartOf="@+id/editEmailButton"
+        app:layout_constraintTop_toTopOf="@+id/editEmailButton" />
+
+    <ImageView
+        android:id="@+id/AccPasswordImageView"
+        android:layout_width="220dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintTop_toBottomOf="@+id/AccEmailImageView"
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/black_plain_text_background_auth" />
+
+    <EditText
+        android:id="@+id/AccPasswordInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Ваш password"
+        android:inputType="text|textWebPassword"
+        android:textColor="#BCD3FF"
+        app:layout_constraintBottom_toBottomOf="@+id/AccPasswordImageView"
+        app:layout_constraintEnd_toEndOf="@+id/AccPasswordImageView"
+        app:layout_constraintStart_toStartOf="@+id/AccPasswordImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccPasswordImageView" />
+
+    <ImageButton
+        android:id="@+id/AccEditPasswordButton"
+        android:layout_width="105dp"
+        android:layout_height="36dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.31"
+        app:layout_constraintStart_toEndOf="@+id/AccPasswordImageView"
+        app:layout_constraintTop_toBottomOf="@+id/editEmailButton"
+        app:layout_constraintVertical_bias="0.025"
+        app:srcCompat="@drawable/black_button" />
+
+    <TextView
+        android:id="@+id/AccEditPasswordButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Змінити"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/AccEditPasswordButton"
+        app:layout_constraintEnd_toEndOf="@+id/AccEditPasswordButton"
+        app:layout_constraintStart_toStartOf="@+id/AccEditPasswordButton"
+        app:layout_constraintTop_toTopOf="@+id/AccEditPasswordButton" />
+
+    <TextView
+        android:id="@+id/AccTitleSettingsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Налаштування користувача"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccLogoBackgroundImageView"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <TextView
+        android:id="@+id/AccTitleRegionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Обрані області"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccPasswordInput"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <ImageButton
+        android:id="@+id/AccExitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect7"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/black_button_account_exit" />
+
+    <TextView
+        android:id="@+id/AccExitButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вийти"
+        android:textColor="@color/black_button_text"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/AccExitButton"
+        app:layout_constraintEnd_toEndOf="@+id/AccExitButton"
+        app:layout_constraintHorizontal_bias="0.29"
+        app:layout_constraintStart_toStartOf="@+id/AccExitButton"
+        app:layout_constraintTop_toTopOf="@+id/AccExitButton" />
+
+    <ImageButton
+        android:id="@+id/AccBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect7"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/black_button_back_main" />
+
+    <TextView
+        android:id="@+id/AccBackButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Повернутись"
+        android:textColor="@color/black_button_text"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/AccBackButton"
+        app:layout_constraintEnd_toEndOf="@+id/AccBackButton"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="@+id/AccBackButton"
+        app:layout_constraintTop_toTopOf="@+id/AccBackButton" />
+
+    <ImageButton
+        android:id="@+id/AccShowPasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccPasswordInput"
+        app:layout_constraintEnd_toEndOf="@+id/AccPasswordImageView"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@+id/AccPasswordImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccPasswordInput"
+        app:layout_constraintVertical_bias="0.55"
+        app:srcCompat="@drawable/button_show_password" />
+
+    <ImageButton
+        android:id="@+id/AccHidePasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/AccPasswordInput"
+        app:layout_constraintEnd_toEndOf="@+id/AccPasswordImageView"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@+id/AccPasswordImageView"
+        app:layout_constraintTop_toTopOf="@+id/AccPasswordInput"
+        app:layout_constraintVertical_bias="0.55"
+        app:srcCompat="@drawable/button_hide_password" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect1"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccSelectRegionSpinner"
+        app:layout_constraintVertical_bias="0.05"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect2"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect1"
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect3"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect2"
+        app:layout_constraintVertical_bias="0.025"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect4"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect3"
+        app:layout_constraintVertical_bias="0.03"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect5"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect4"
+        app:layout_constraintVertical_bias="0.032"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect6"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect5"
+        app:layout_constraintVertical_bias="0.045"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageView
+        android:id="@+id/AccRegionNoSelect7"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccRegionNoSelect6"
+        app:layout_constraintVertical_bias="0.05"
+        app:srcCompat="@drawable/black_noselect_region" />
+
+    <ImageButton
+        android:id="@+id/AccEditRegionButton"
+        android:layout_width="105dp"
+        android:layout_height="36dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.307"
+        app:layout_constraintStart_toEndOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/AccTitleRegionTextView"
+        app:layout_constraintVertical_bias="0.035"
+        app:srcCompat="@drawable/black_button" />
+
+    <TextView
+        android:id="@+id/AccEditRegionButtonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Змінити"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/AccEditRegionButton"
+        app:layout_constraintEnd_toEndOf="@+id/AccEditRegionButton"
+        app:layout_constraintStart_toStartOf="@+id/AccEditRegionButton"
+        app:layout_constraintTop_toTopOf="@+id/AccEditRegionButton" />
+
+    <ImageView
+        android:id="@+id/AccBackgroundSelectSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.185"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AccTitleRegionTextView"
+        app:layout_constraintVertical_bias="0.035"
+        app:srcCompat="@drawable/black_select_region_spinner" />
+
+    <Spinner
+        android:id="@+id/AccSelectRegionSpinner"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinner" />
+
+    <ImageButton
+        android:id="@+id/AccAddRegionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinner"
+        app:layout_constraintStart_toEndOf="@+id/AccSelectRegionSpinner"
+        app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinner"
+        app:srcCompat="@drawable/black_button_region_add" />
+
+    <ScrollView
+        android:id="@+id/ScrollView"
+        android:layout_width="400dp"
+        android:layout_height="326dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintStart_toStartOf="@+id/AccActivityBackgroundImageView"
+        app:layout_constraintTop_toBottomOf="@+id/AccSelectRegionSpinner"
+        app:layout_constraintVertical_bias="0.1">
+
+        <LinearLayout
+            android:id="@+id/AccRegionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintVertical_bias="0.03" />
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/regionImageViewActive"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black_select_region" />
+
+    <TextView
+        android:id="@+id/regionTextViewActive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/regionImageViewActive"
+        app:layout_constraintEnd_toStartOf="@+id/deleteRegionButtonActive"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="@+id/regionImageViewActive"
+        app:layout_constraintTop_toTopOf="@+id/regionImageViewActive" />
+
+    <ImageButton
+        android:id="@+id/deleteRegionButtonActive"
+        android:layout_width="35dp"
+        android:layout_height="36dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/regionImageViewActive"
+        app:layout_constraintEnd_toEndOf="@+id/regionImageViewActive"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/regionImageViewActive"
+        app:layout_constraintTop_toTopOf="@+id/regionImageViewActive"
+        app:srcCompat="@drawable/black_button_delete_region" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
