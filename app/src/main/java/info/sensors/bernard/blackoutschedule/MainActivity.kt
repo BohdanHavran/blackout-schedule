@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private var goToNewActivity = false
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        
         setContentView(R.layout.activity_main)
 
         val click = MediaPlayer.create(this, R.raw.button_sound)
@@ -73,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
 
         click.setVolume(clickSound, clickSound)
+        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
 
         if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
             val brightnessValue = sharedPreferencesBrightness.getFloat("brightnessValue", 1f)
@@ -114,8 +117,13 @@ class MainActivity : AppCompatActivity() {
             goToNewActivity = true
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
+            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+            }
             finish()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
 
         buttonFirstGroup.setOnClickListener {
@@ -151,6 +159,19 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    private fun setLocale(context: Context, language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+    }
+    private fun saveLocale(language: String) {
+        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("My_Lang", language)
+        editor.apply()
+    }
     override fun onPause() {
         super.onPause()
         hideUi()
