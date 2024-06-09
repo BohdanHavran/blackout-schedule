@@ -112,10 +112,10 @@ class AuthActivity : AppCompatActivity() {
 
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
-        val currentUsrRegionCount = sharedPreferencesForUser.getInt("usetRegionCount", 0)
-        if (currentUsrID != " " && currentUsrRegionCount > 0){
+        val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+        if (currentUsrID != " "){
             goToNewActivity = true
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, RegionsActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -169,8 +169,12 @@ class AuthActivity : AppCompatActivity() {
                                                     val jsonResponse = JSONObject(it)
                                                     val message = jsonResponse.getString("region_count")
                                                     if (message.toInt() > 0){
+                                                        val editor = sharedPreferencesForUser.edit()
+                                                        editor.putString("userData", userID)
+                                                        editor.putInt("userRegionCount", message.toInt())
+                                                        editor.apply()
                                                         goToNewActivity = true
-                                                        val intent = Intent(this, SettingsActivity::class.java)
+                                                        val intent = Intent(this, MainActivity::class.java)
                                                         startActivity(intent)
                                                         val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
                                                         when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
@@ -182,6 +186,21 @@ class AuthActivity : AppCompatActivity() {
                                                         finish()
                                                     }
                                                     else{
+                                                        val editor = sharedPreferencesForUser.edit()
+                                                        editor.putString("userData", userID)
+                                                        editor.putInt("userRegionCount", message.toInt())
+                                                        editor.apply()
+                                                        goToNewActivity = true
+                                                        val intent = Intent(this, RegionsActivity::class.java)
+                                                        startActivity(intent)
+                                                        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
+                                                        when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                                                            in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                                                            in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                                                            in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                                                            in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+                                                        }
+                                                        finish()
                                                         //TODO Перехід на вибір графіків
                                                         Log.d("TAG", "onCreate: Перехід на вибір графіків")
                                                     }

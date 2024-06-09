@@ -32,6 +32,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.util.Locale
@@ -170,6 +171,8 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 0.5f
             // TODO тут мав би бути код для вибору 1 групи
             setRegionNewData("12", "Група 1.1")
+            changeUserRegion("Група 1.1")
+
         }
 
         buttonSecondGroup.setOnClickListener {
@@ -180,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 0.5f
             // TODO тут мав би бути код для вибору 2 групи
             setRegionNewData("12", "Група 2.1")
+            changeUserRegion("Група 2.1")
         }
 
         buttonThirdGroup.setOnClickListener {
@@ -190,10 +194,15 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 1f
             // TODO тут мав би бути код для вибору 3 групи
             setRegionNewData("12", "Група 3.1")
+            changeUserRegion("Група 3.1")
+
         }
 
 
-        setRegionNewData()
+
+        getUserRegion()
+
+        //setRegionNewData()
 
         hideUi()
     }
@@ -202,20 +211,60 @@ class MainActivity : AppCompatActivity() {
         .writeTimeout(100, TimeUnit.SECONDS)
         .readTimeout(100, TimeUnit.SECONDS)
         .build()
+    fun getUserRegion(groupCount: Int = 0){
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+        val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+
+        if (currentUsrID != null) {
+            checkUserRegion(currentUsrID) { response ->
+                response?.let {
+                    try {
+                        Log.d("TAG", "getUserRegion: $response")
+
+                        val jsonResponse = JSONObject(it)
+
+                        var groups = jsonResponse.getJSONArray("selected_regions")
+
+                        val reversedGroups = JSONArray()
+                        for (i in groups.length() - 1 downTo 0) {
+                            reversedGroups.put(groups.getJSONObject(i))
+                        }
+
+                        groups = reversedGroups
+                        Log.d("TAG", "getUserRegion: $groups")
+
+
+                        val groupData = groups.getJSONObject(groupCount)
+                        val groupName = groupData.getString("group_name")
+                        val groupId = groupData.getInt("region_id")
+                        Log.d("TAG", "getUserRegion: $groupName,   $groupId")
+                        setRegionNewData(groupId.toString(), groupName)
+
+                    } catch (e: Exception) {
+                        // Handle JSON parsing exceptions
+                        e.printStackTrace()
+                        Log.e("TAG", "Failed to parse JSON response")
+                    }
+
+
+
+                } ?: run {
+                    getUserRegion(groupCount)
+                    Log.e("TAG", "Received null response")
+                }
+            }
+        }
+    }
     fun setRegionNewData(region: String = "12", group: String = "Група 1.1"){
         getAllGroups() { response ->
             response?.let {
                 try {
-                    //Log.d("TAG", "onCreate: $response")
                     val jsonResponse = JSONObject(it)
                     val regionData = jsonResponse.getJSONObject(region)
                     val groups = regionData.getJSONArray("groups")
                     val regionName = regionData.getString("region")
-
-
                     Log.d("TAG", "Response message: ${groups}")
                     Log.d("TAG", "Response message: ${regionName}")
-
                     for (i in 0 until groups.length()) {
                         val groupData = groups.getJSONObject(i)
                         val groupName = groupData.getString("group")
@@ -232,9 +281,6 @@ class MainActivity : AppCompatActivity() {
                             val textRegionForReplace: TextView = findViewById(R.id.textView3)
                             textRegionForReplace.text =  getString(R.string.Львівська)
 
-
-
-
                             val imageForReplace: ImageView = findViewById(R.id.imageView9)
                             Picasso.get()
                                 .load("http://34.159.225.88/photo/$scheduleImage")
@@ -242,7 +288,6 @@ class MainActivity : AppCompatActivity() {
                                 .placeholder(R.drawable.black_button_delete_region)  // Опціонально: зображення-заповнювач, поки завантажується фото
                                 .error(R.drawable.black_button_delete_region)  // Опціонально: зображення для показу у випадку помилки
                                 .into(imageForReplace)
-
 
                             break
                         }
@@ -258,6 +303,60 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    fun changeUserRegion(region: String  = "Група 1.1"){
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+        val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+        val currentSelectedRegionCount = sharedPreferencesForUser.getInt("selectedRegionCount", 0)
+
+        if (currentUsrID != null) {
+            checkUserRegion(currentUsrID) { response ->
+                response?.let {
+                    try {
+                        Log.d("TAG", "getUserRegion: $response")
+
+                        val jsonResponse = JSONObject(it)
+
+                        var groups = jsonResponse.getJSONArray("selected_regions")
+
+                        val reversedGroups = JSONArray()
+                        for (i in groups.length() - 1 downTo 0) {
+                            reversedGroups.put(groups.getJSONObject(i))
+                        }
+
+                        groups = reversedGroups
+                        Log.d("TAG", "getUserRegion: $groups")
+
+
+                        val groupData = groups.getJSONObject(currentSelectedRegionCount)
+                        val groupName = groupData.getString("group_name")
+                        val groupId = groupData.getInt("region_id")
+                        Log.d("TAG", "getUserRegionuytre: |$currentUsrID|\t|$groupId|\t|$groupName|\t|$region|")
+
+                        changeUserRegion(currentUsrID, groupId.toString(), groupName, region) {response ->
+
+                        }
+
+
+                    } catch (e: Exception) {
+                        // Handle JSON parsing exceptions
+                        e.printStackTrace()
+                        Log.e("TAG", "Failed to parse JSON response")
+                    }
+
+
+
+                } ?: run {
+                    changeUserRegion(region)
+                    Log.e("TAG", "Received null response")
+                }
+            }
+        }
+
+
+
+
+
+    }
     fun getAllGroups(callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = doInBackground()
@@ -266,6 +365,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    fun checkUserRegion(userId: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground2(userId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+    fun changeUserRegion(userId: String, regionId: String, currentGroup: String, newGroup: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground3(userId, regionId, currentGroup, newGroup)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
     private suspend fun doInBackground(): String? {
         //val json = JSONObject().apply {}
         //val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
@@ -284,6 +400,60 @@ class MainActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
             Log.d("TAG", "doInBackground: ALl Not Works")
+            null
+        }
+    }
+    private suspend fun doInBackground2(userId: String): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+        }
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Check_user_region") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground2: doInBackground2 Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground2: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground2: ALl Not Works")
+            null
+        }
+    }
+    private suspend fun doInBackground3(userId: String, regionId: String, currentGroup: String, newGroup: String): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+            put("region_id", regionId)
+            put("grup_current", currentGroup)
+            put("grup_new", newGroup)
+        }
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        Log.d("TAG", "doInBackground3: $json")
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Change_user_region")
+            .post(body)
+            .build()
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground2: doInBackground2 Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground2: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground2: ALl Not Works")
             null
         }
     }
