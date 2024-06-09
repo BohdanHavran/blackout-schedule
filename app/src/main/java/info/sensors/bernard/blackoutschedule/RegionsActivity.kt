@@ -107,6 +107,16 @@ class RegionsActivity : AppCompatActivity() {
             window.attributes = layoutParams
         }
 
+
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+        val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+        val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+        if (currentUsrRegionCount > 0){
+            goToNewActivity = true
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 //        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
 //        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
 //        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -195,7 +205,7 @@ class RegionsActivity : AppCompatActivity() {
 
                 Log.d("Region Modify", "Try add: addRegion(2, ${1 + regions.indexOf(selectedRegion)})")
 
-                addRegion(2, 1 + regions.indexOf(selectedRegion)) { response ->
+                addRegion(currentUsrID.toString().toInt(), 1 + regions.indexOf(selectedRegion)) { response ->
                     Log.d("TAG", "onCreate: $response")
                     response?.let {
                         try {
@@ -210,6 +220,11 @@ class RegionsActivity : AppCompatActivity() {
                         Log.e("TAG", "Received null response")
                     }
                 }
+
+                val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.apply()
 
                 addRegionView(selectedRegion)
                 checkApplyButton()
@@ -545,6 +560,8 @@ class RegionsActivity : AppCompatActivity() {
     }
     private fun addRegionView(region: String) {
         try {
+            val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+            val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
 
             val regionView = LayoutInflater.from(this).inflate(R.layout.region_item, regionsContainer, false)
             val regionTextView = regionView.findViewById<TextView>(R.id.regionTextView)
@@ -560,7 +577,7 @@ class RegionsActivity : AppCompatActivity() {
 
                 Log.d("Region Modify", "Try remove: removeRegion(2, ${1 + regions.indexOf(region)})")
 
-                removeRegion(2, 1 + regions.indexOf(region)) { response ->
+                removeRegion(currentUsrID.toString().toInt(), 1 + regions.indexOf(region)) { response ->
                     Log.d("TAG", "onCreate: $response")
                     response?.let {
                         try {
@@ -576,6 +593,10 @@ class RegionsActivity : AppCompatActivity() {
                     }
                 }
 
+                val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.apply()
                 checkApplyButton()
 
             }
