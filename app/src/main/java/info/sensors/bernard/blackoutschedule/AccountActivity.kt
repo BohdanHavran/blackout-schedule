@@ -33,6 +33,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class AccountActivity : AppCompatActivity() {
     private var goToNewActivity = false
@@ -75,7 +87,7 @@ class AccountActivity : AppCompatActivity() {
     private var imageViews = mutableListOf<ImageView>()
     private var selectedRegions: MutableList<String> = mutableListOf()
     private val maxRegions = 7
-    val regions = arrayOf("Region1", "Region2", "Region3", "Region4", "Region5", "Region6")
+    var regions = arrayOf<String>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,9 +139,72 @@ class AccountActivity : AppCompatActivity() {
 
         val spinner: Spinner = findViewById(R.id.AccSelectRegionSpinner)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions)
-
         spinner.adapter = arrayAdapter
-        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+
+        getRegions { response ->
+            response?.let {
+                try {
+                    // Parse the response string into a JSONObject
+                    val jsonResponse = JSONObject(it)
+                    val regionsList = mutableListOf<String>()
+
+                    // Iterate over the keys of the JSONObject
+                    val keys = jsonResponse.keys()
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+                        val regionObject = jsonResponse.getJSONObject(key)
+                        val region = regionObject.getString("region")
+                        Log.d("ADDREGION TO REGIONS", "Region: " + region)
+                        regionsList.add(region)
+                    }
+
+                    // Convert the MutableList to an array
+                    regions = regionsList.toTypedArray()
+                    Log.d("ADDREGION TO REGIONS", "Add all regions: " + regions.contentToString())
+
+                    // Update the spinner's adapter
+                    runOnUiThread {
+                        val newArrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions)
+                        spinner.adapter = newArrayAdapter
+                    }
+
+                } catch (e: Exception) {
+                    // Handle JSON parsing exceptions
+                    e.printStackTrace()
+                    Log.e("TAG", "Failed to parse JSON response")
+                }
+            } ?: run {
+                // Handle the case where the response is null
+                Log.e("TAG", "Received null response")
+            }
+        }
+
+        getUserRegion(2) { response ->
+            response?.let {
+                try {
+                    // Parse the response string into a JSONObject
+                    val jsonResponse = JSONObject(it)
+                    val selectedRegions = jsonResponse.getJSONArray("selected_regions")
+
+                    // Iterate over the JSONArray of selected regions
+                    for (i in 0 until selectedRegions.length()) {
+                        val regionObject = selectedRegions.getJSONObject(i)
+                        val regionName = regionObject.getString("region_name")
+                        addRegionView(regionName)
+                    }
+
+                } catch (e: Exception) {
+                    // Handle JSON parsing exceptions
+                    e.printStackTrace()
+                    Log.e("TAG", "Failed to parse JSON response")
+                }
+            } ?: run {
+                // Handle the case where the response is null
+                Log.e("TAG", "Received null response")
+            }
+        }
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -144,7 +219,7 @@ class AccountActivity : AppCompatActivity() {
             }
 
         }
-        
+
         regionsContainer = findViewById(R.id.AccRegionsContainer)
 
         val addRegionButton: ImageButton = findViewById(R.id.AccAddRegionButton)
@@ -154,7 +229,27 @@ class AccountActivity : AppCompatActivity() {
             Log.d("AccountActivity", "Обрані регіони: $selectedRegion")
             if (selectedRegions.size < maxRegions && !selectedRegions.contains(selectedRegion)) {
                 selectedRegions.add(selectedRegion)
+
+                Log.d("Region Modify", "Try add: addRegion(2, ${1 + regions.indexOf(selectedRegion)})")
+
+                addRegion(2, 1 + regions.indexOf(selectedRegion)) { response ->
+                    Log.d("TAG", "onCreate: $response")
+                    response?.let {
+                        try {
+
+                        } catch (e: Exception) {
+                            // Handle JSON parsing exceptions
+                            e.printStackTrace()
+                            Log.e("TAG", "Failed to parse JSON response")
+                        }
+                    } ?: run {
+                        // Handle the case where the response is null
+                        Log.e("TAG", "Received null response")
+                    }
+                }
+
                 addRegionView(selectedRegion)
+
             } else {
                 Toast.makeText(this, "Ви не можете добавити більше областей або ця область вже добавлена", Toast.LENGTH_SHORT).show()
             }
@@ -396,6 +491,174 @@ class AccountActivity : AppCompatActivity() {
         
 
         hideUi()
+    }
+
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(100, TimeUnit.SECONDS)
+        .writeTimeout(100, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .build()
+
+    fun getRegions(callback: (String?) -> Unit) { // email: String, password: String,
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground()
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackground(): String? { // email: String, password: String
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Get_all_groups_regions") // Replace with the actual URL of your server
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "Regions doInBackground: ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d("TAG", "Regions doInBackground: ALl Works not in the right direction")
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "Regions doInBackground: ALl Not Works")
+            doInBackground()
+            null
+        }
+    }
+
+    fun getUserRegion(userId: Int, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackgroundGetUserRegion(userId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackgroundGetUserRegion(userId: Int): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Check_user_region") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "doInBackground (Check Region): ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d(
+                        "TAG",
+                        "doInBackground (Check Region): ALl Works not in the right direction"
+                    )
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground (Check Region): ALl Not Works")
+            null
+        }
+    }
+
+    fun addRegion(userId: Int, regionId: Int, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackgroundAddRegion(userId, regionId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackgroundAddRegion(userId: Int, regionId: Int): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+            put("region_id", regionId)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Add_user_region") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "doInBackground (Add Region): ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d(
+                        "TAG",
+                        "doInBackground (Add Region): ALl Works not in the right direction"
+                    )
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground (Add Region): ALl Not Works")
+            null
+        }
+    }
+
+    fun removeRegion(userId: Int, regionId: Int, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackgroundRemoveRegion(userId, regionId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackgroundRemoveRegion(userId: Int, regionId: Int): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+            put("region_id", regionId)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Remove_user_region") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "doInBackground (Remove Region): ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d(
+                        "TAG",
+                        "doInBackground (Remove Region): ALl Works not in the right direction"
+                    )
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground (Remove Region): ALl Not Works")
+            null
+        }
     }
 
     fun updateSelectedRegionsOrder() {

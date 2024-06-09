@@ -450,16 +450,19 @@ class RegionsActivity : AppCompatActivity() {
 
         return try {
             val response: Response = client.newCall(request).execute()
-            if (response.isSuccessful) {
-                Log.d("TAG", "Regions doInBackground: ALl Works")
-                response.body?.string()
-            } else {
-                Log.d("TAG", "Regions doInBackground: ALl Works not in the right direction")
-                null
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "Regions doInBackground: ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d("TAG", "Regions doInBackground: ALl Works not in the right direction")
+                    null
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
             Log.d("TAG", "Regions doInBackground: ALl Not Works")
+            doInBackground()
             null
         }
     }
