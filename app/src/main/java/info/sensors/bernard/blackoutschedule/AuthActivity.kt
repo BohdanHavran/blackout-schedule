@@ -108,6 +108,20 @@ class AuthActivity : AppCompatActivity() {
         val textButtonCreateAccount: TextView = findViewById(R.id.createAccountButtonText)
         val textButtonBackAuth: TextView = findViewById(R.id.backAuthButtonText)
 
+
+
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+        val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+        val currentUsrRegionCount = sharedPreferencesForUser.getInt("usetRegionCount", 0)
+        if (currentUsrID != " " && currentUsrRegionCount > 0){
+            goToNewActivity = true
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+
+
         //-----
         val buttonSkip: ImageButton = findViewById(R.id.skipButton)
         buttonSkip.setOnClickListener {
@@ -126,9 +140,6 @@ class AuthActivity : AppCompatActivity() {
             finish()
         }
 
-//        val buttonCreateAccount: ImageButton = findViewById(R.id.createAccountButton)
-
-
         buttonAuth.setOnClickListener {
             val email = inputLogin.text.toString()
             val password = inputPassword.text.toString()
@@ -138,37 +149,59 @@ class AuthActivity : AppCompatActivity() {
                     authenticate(email, password) { response ->
                         response?.let {
                             try {
-                                // Parse the response string into a JSONObject
                                 val jsonResponse = JSONObject(it)
-
-                                // Extract values for "message" and "role"
                                 val message = jsonResponse.getString("message")
                                 val role = jsonResponse.getString("role")
+                                val userID = jsonResponse.getString("user_id")
 
-                                // Log the extracted values
-                                Log.d("TAG", "Response message: $message, role: $role")
-
-                                // Show a Toast message with the response message
-//                                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-                                // Perform an action based on the role
+                                Log.d("TAG", "Response message: $message, role: $role, id $userID")
                                 if (role == "1") {
                                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                                     Toast.makeText(this, "Welcome Admin $email", Toast.LENGTH_SHORT).show()
-                                    // Navigate to a different activity or perform a specific action for role 1
-                                    // Example: startActivity(Intent(this, Role1Activity::class.java))
                                 }
                                 else {
                                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                                     Toast.makeText(this, "Welcome $email", Toast.LENGTH_SHORT).show()
+                                    if (userID.isNotEmpty()) {
+                                        checkUserRegion(userID) { response ->
+                                            response?.let {
+                                                try {
+                                                    val jsonResponse = JSONObject(it)
+                                                    val message = jsonResponse.getString("region_count")
+                                                    if (message.toInt() > 0){
+                                                        goToNewActivity = true
+                                                        val intent = Intent(this, SettingsActivity::class.java)
+                                                        startActivity(intent)
+                                                        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
+                                                        when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                                                            in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                                                            in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                                                            in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                                                            in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+                                                        }
+                                                        finish()
+                                                    }
+                                                    else{
+                                                        //TODO Перехід на вибір графіків
+                                                        Log.d("TAG", "onCreate: Перехід на вибір графіків")
+                                                    }
+                                                } catch (e: Exception) {
+                                                    e.printStackTrace()
+                                                    Log.e("TAG", "Failed to parse JSON response")
+                                                }
+                                            } ?: run {
+                                                Log.e("TAG", "Received null response")
+                                            }
+                                        }
+                                    } else {
+                                        inputPassword.error = "Error width user id"
+                                    }
                                 }
                             } catch (e: Exception) {
-                                // Handle JSON parsing exceptions
                                 e.printStackTrace()
                                 Log.e("TAG", "Failed to parse JSON response")
                             }
                         } ?: run {
-                            // Handle the case where the response is null
                             Log.e("TAG", "Received null response")
                         }
                     }
@@ -181,8 +214,6 @@ class AuthActivity : AppCompatActivity() {
                 inputLogin.error = "Please enter correct email"
             }
         }
-
-
 
         //-----
 
@@ -201,6 +232,10 @@ class AuthActivity : AppCompatActivity() {
             buttonBackAuth.isVisible = true
             textButtonCreateAccount.isVisible = true
             textButtonBackAuth.isVisible = true
+
+        }
+
+        buttonCreateAccount.setOnClickListener {
             val email = inputLogin.text.toString()
             val password = inputPassword.text.toString()
             if (email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -260,13 +295,6 @@ class AuthActivity : AppCompatActivity() {
             textButtonBackAuth.isVisible = false
         }
 
-//        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
-//        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
-//        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-//        val layoutParams = window.attributes
-//        layoutParams.screenBrightness = Brigthness
-//        window.attributes = layoutParams
-
 
 
         hideUi()
@@ -275,9 +303,9 @@ class AuthActivity : AppCompatActivity() {
 //
 //class AuthenticationTask {
     private val client = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(50, TimeUnit.SECONDS)
+        .writeTimeout(50, TimeUnit.SECONDS)
+        .readTimeout(50, TimeUnit.SECONDS)
         .build()
     fun createAccount(email: String, password: String, callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -344,6 +372,7 @@ class AuthActivity : AppCompatActivity() {
             val response: Response = client.newCall(request).execute()
             if (response.isSuccessful) {
                 Log.d("TAG", "doInBackground: ALl Works")
+
                 response.body?.string()
             } else {
                 Log.d("TAG", "doInBackground: ALl Works not in the right direction")
@@ -352,6 +381,43 @@ class AuthActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
             Log.d("TAG", "doInBackground: ALl Not Works")
+            null
+        }
+    }
+
+    fun checkUserRegion(userId: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground2(userId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackground2(userId: String): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Check_user_region") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground2: doInBackground2 Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground2: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground2: ALl Not Works")
             null
         }
     }

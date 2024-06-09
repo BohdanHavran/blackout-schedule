@@ -46,5 +46,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
+    implementation("com.squareup.picasso:picasso:2.71828")
 
 }

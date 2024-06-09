@@ -163,7 +163,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registerButton"
-        app:layout_constraintVertical_bias="0.489"
+        app:layout_constraintVertical_bias="0.061"
         app:srcCompat="@drawable/black_button" />
 
     <TextView
@@ -190,7 +190,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput"
-        app:layout_constraintVertical_bias="0.783"
+        app:layout_constraintVertical_bias="0.131"
         app:srcCompat="@drawable/black_button" />
 
     <TextView

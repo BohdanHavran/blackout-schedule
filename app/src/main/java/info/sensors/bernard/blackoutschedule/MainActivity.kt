@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
+import android.icu.text.SimpleDateFormat
+import android.icu.util.Calendar
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +16,26 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private var goToNewActivity = false
@@ -61,7 +78,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+        val sharedPreferencesForLanguage = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val language = sharedPreferencesForLanguage.getString("My_Lang", "deff")
+        if (language != "deff"){
+            setLocale(this, language!!)
+        }
         setContentView(R.layout.activity_main)
 
         val click = MediaPlayer.create(this, R.raw.button_sound)
@@ -90,16 +111,18 @@ class MainActivity : AppCompatActivity() {
         val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
         val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
         val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
+        val buttonAccount: ImageButton = findViewById(R.id.accountButton)
+
+        val textData: TextView = findViewById(R.id.textView2)
 
 
 
 
 
-
-
-
-
-
+        val currentDate = Calendar.getInstance().time
+        val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val formattedDate = formatter.format(currentDate)
+        textData.text = formattedDate
 
 
         buttonQuest.setOnClickListener {
@@ -125,7 +148,20 @@ class MainActivity : AppCompatActivity() {
             }
             finish()
         }
-
+        buttonAccount.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            goToNewActivity = true
+            val intent = Intent(this, AccountActivity::class.java)
+            startActivity(intent)
+            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+            }
+            finish()
+        }
         buttonFirstGroup.setOnClickListener {
             click.start()
             click.seekTo(0)
@@ -133,6 +169,7 @@ class MainActivity : AppCompatActivity() {
             buttonSecondGroup.alpha = 0.5f
             buttonThirdGroup.alpha = 0.5f
             // TODO тут мав би бути код для вибору 1 групи
+            setRegionNewData("12", "Група 1.1")
         }
 
         buttonSecondGroup.setOnClickListener {
@@ -142,6 +179,7 @@ class MainActivity : AppCompatActivity() {
             buttonSecondGroup.alpha = 1f
             buttonThirdGroup.alpha = 0.5f
             // TODO тут мав би бути код для вибору 2 групи
+            setRegionNewData("12", "Група 2.1")
         }
 
         buttonThirdGroup.setOnClickListener {
@@ -151,12 +189,104 @@ class MainActivity : AppCompatActivity() {
             buttonSecondGroup.alpha = 0.5f
             buttonThirdGroup.alpha = 1f
             // TODO тут мав би бути код для вибору 3 групи
+            setRegionNewData("12", "Група 3.1")
         }
+
+
+        setRegionNewData()
 
         hideUi()
     }
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(100, TimeUnit.SECONDS)
+        .writeTimeout(100, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .build()
+    fun setRegionNewData(region: String = "12", group: String = "Група 1.1"){
+        getAllGroups() { response ->
+            response?.let {
+                try {
+                    //Log.d("TAG", "onCreate: $response")
+                    val jsonResponse = JSONObject(it)
+                    val regionData = jsonResponse.getJSONObject(region)
+                    val groups = regionData.getJSONArray("groups")
+                    val regionName = regionData.getString("region")
 
 
+                    Log.d("TAG", "Response message: ${groups}")
+                    Log.d("TAG", "Response message: ${regionName}")
+
+                    for (i in 0 until groups.length()) {
+                        val groupData = groups.getJSONObject(i)
+                        val groupName = groupData.getString("group")
+                        val scheduleId = groupData.getInt("schedule_id")
+                        val scheduleImage = groupData.getString("schedule_image")
+
+                        Log.d("TAG", "Group Name: $groupName, Schedule ID: $scheduleId, Schedule Image: $scheduleImage")
+
+                        if (groupName == group) {
+                            // Do something with the specific group
+                            Log.d("TAG", "Found group: $groupName with Schedule Image: $scheduleImage")
+
+
+                            val textRegionForReplace: TextView = findViewById(R.id.textView3)
+                            textRegionForReplace.text =  getString(R.string.Львівська)
+
+
+
+
+                            val imageForReplace: ImageView = findViewById(R.id.imageView9)
+                            Picasso.get()
+                                .load("http://34.159.225.88/photo/$scheduleImage")
+                                .fit()
+                                .placeholder(R.drawable.black_button_delete_region)  // Опціонально: зображення-заповнювач, поки завантажується фото
+                                .error(R.drawable.black_button_delete_region)  // Опціонально: зображення для показу у випадку помилки
+                                .into(imageForReplace)
+
+
+                            break
+                        }
+                    }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.e("TAG", "Failed to parse JSON response")
+                    }
+            } ?: run {
+                Log.e("TAG", "Received null response")
+                setRegionNewData(region, group)
+            }
+        }
+    }
+    fun getAllGroups(callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground()
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+    private suspend fun doInBackground(): String? {
+        //val json = JSONObject().apply {}
+        //val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Get_all_groups_regions")
+            .build()
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground: ALl Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground: ALl Not Works")
+            null
+        }
+    }
 
 
     private fun setLocale(context: Context, language: String) {

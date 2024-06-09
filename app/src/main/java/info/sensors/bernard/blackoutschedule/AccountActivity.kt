@@ -88,6 +88,7 @@ class AccountActivity : AppCompatActivity() {
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
         click.setVolume(clickSound, clickSound)
+        val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
 
         val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
         if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
@@ -356,6 +357,17 @@ class AccountActivity : AppCompatActivity() {
         val backButton: ImageButton = findViewById(R.id.AccBackButton)
 
         backButton.setOnClickListener{
+            click.start()
+            click.seekTo(0)
+            goToNewActivity = true
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+            }
             finish()
         }
 
