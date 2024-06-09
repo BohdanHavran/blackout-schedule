@@ -9,15 +9,31 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 import androidx.core.view.isVisible
+
 
 class AuthActivity : AppCompatActivity() {
     private var goToNewActivity = false
@@ -92,6 +108,85 @@ class AuthActivity : AppCompatActivity() {
         val textButtonCreateAccount: TextView = findViewById(R.id.createAccountButtonText)
         val textButtonBackAuth: TextView = findViewById(R.id.backAuthButtonText)
 
+        //-----
+        val buttonSkip: ImageButton = findViewById(R.id.skipButton)
+        buttonSkip.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            goToNewActivity = true
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
+            when(sharedPreferencesForFade.getInt("fadeStatus", 50)){
+                in 21..40 -> overridePendingTransition(R.anim.fade_in_realy_slow, R.anim.fade_out_realy_slow)
+                in 41..60 -> overridePendingTransition(R.anim.fade_in_slow, R.anim.fade_out_slow)
+                in 61..80 -> overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                in 81..100 -> overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast)
+            }
+            finish()
+        }
+
+//        val buttonCreateAccount: ImageButton = findViewById(R.id.createAccountButton)
+
+
+        buttonAuth.setOnClickListener {
+            val email = inputLogin.text.toString()
+            val password = inputPassword.text.toString()
+
+            if (email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                if (password.isNotEmpty()) {
+                    authenticate(email, password) { response ->
+                        response?.let {
+                            try {
+                                // Parse the response string into a JSONObject
+                                val jsonResponse = JSONObject(it)
+
+                                // Extract values for "message" and "role"
+                                val message = jsonResponse.getString("message")
+                                val role = jsonResponse.getString("role")
+
+                                // Log the extracted values
+                                Log.d("TAG", "Response message: $message, role: $role")
+
+                                // Show a Toast message with the response message
+//                                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+                                // Perform an action based on the role
+                                if (role == "1") {
+                                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Welcome Admin $email", Toast.LENGTH_SHORT).show()
+                                    // Navigate to a different activity or perform a specific action for role 1
+                                    // Example: startActivity(Intent(this, Role1Activity::class.java))
+                                }
+                                else {
+                                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Welcome $email", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                // Handle JSON parsing exceptions
+                                e.printStackTrace()
+                                Log.e("TAG", "Failed to parse JSON response")
+                            }
+                        } ?: run {
+                            // Handle the case where the response is null
+                            Log.e("TAG", "Received null response")
+                        }
+                    }
+                } else {
+                    inputPassword.error = "Empty fields are not allowed"
+                }
+            } else if (email.isEmpty()) {
+                inputLogin.error = "Empty fields are not allowed"
+            } else {
+                inputLogin.error = "Please enter correct email"
+            }
+        }
+
+
+
+        //-----
+
+
         buttonRegister.setOnClickListener {
 
             inputLogin.setHint("Створіть email")
@@ -106,7 +201,56 @@ class AuthActivity : AppCompatActivity() {
             buttonBackAuth.isVisible = true
             textButtonCreateAccount.isVisible = true
             textButtonBackAuth.isVisible = true
-
+            val email = inputLogin.text.toString()
+            val password = inputPassword.text.toString()
+            if (email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                if (password.isNotEmpty()) {
+                    createAccount(email, password) { response ->
+                        Log.d("TAG", "onCreate: $response")
+//                        response?.let {
+//                            try {
+//                                // Parse the response string into a JSONObject
+//                                val jsonResponse = JSONObject(it)
+//
+//                                // Extract values for "message" and "role"
+//                                val message = jsonResponse.getString("message")
+//                                val role = jsonResponse.getString("role")
+//
+//                                // Log the extracted values
+//                                Log.d("TAG", "Response message: $message, role: $role")
+//
+//                                // Show a Toast message with the response message
+////                                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+//
+//                                // Perform an action based on the role
+//                                if (role == "1") {
+//                                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+//                                    Toast.makeText(this, "Welcome Admin $email", Toast.LENGTH_SHORT).show()
+//                                    // Navigate to a different activity or perform a specific action for role 1
+//                                    // Example: startActivity(Intent(this, Role1Activity::class.java))
+//                                }
+//                                else {
+//                                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+//                                    Toast.makeText(this, "Welcome $email", Toast.LENGTH_SHORT).show()
+//                                }
+//                            } catch (e: Exception) {
+//                                // Handle JSON parsing exceptions
+//                                e.printStackTrace()
+//                                Log.e("TAG", "Failed to parse JSON response")
+//                            }
+//                        } ?: run {
+//                            // Handle the case where the response is null
+//                            Log.e("TAG", "Received null response")
+//                        }
+                    }
+                } else {
+                    inputPassword.error = "Empty fields are not allowed"
+                }
+            } else if (email.isEmpty()) {
+                inputLogin.error = "Empty fields are not allowed"
+            } else {
+                inputLogin.error = "Please enter correct email"
+            }
         }
 
         buttonBackAuth.setOnClickListener {
@@ -128,7 +272,91 @@ class AuthActivity : AppCompatActivity() {
         hideUi()
     }
 
+//
+//class AuthenticationTask {
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build()
+    fun createAccount(email: String, password: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground1(email, password)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
 
+    private suspend fun doInBackground1(email: String, password: String): String? {
+        val json = JSONObject().apply {
+            put("email", email)
+            put("password", password)
+            put("role",0)
+            put("name","user")
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Create_account") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground: ALl Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground: ALl Not Works")
+            null
+        }
+    }
+    fun authenticate(email: String, password: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground(email, password)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackground(email: String, password: String): String? {
+        val json = JSONObject().apply {
+            put("email", email)
+            put("password", password)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Check_account") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground: ALl Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground: ALl Not Works")
+            null
+        }
+    }
+//}
+//
 
 
     override fun onPause() {

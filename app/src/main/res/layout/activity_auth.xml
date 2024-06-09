@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Введіть email"
-        android:inputType="text"
+        android:inputType="text|textEmailAddress"
         android:textColor="#BCD3FF"
         app:layout_constraintBottom_toBottomOf="@+id/imageView5"
         app:layout_constraintEnd_toEndOf="@+id/imageView5"
@@ -163,7 +163,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registerButton"
-        app:layout_constraintVertical_bias="0.060000002"
+        app:layout_constraintVertical_bias="0.489"
         app:srcCompat="@drawable/black_button" />
 
     <TextView
@@ -190,7 +190,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput"
-        app:layout_constraintVertical_bias="0.13"
+        app:layout_constraintVertical_bias="0.783"
         app:srcCompat="@drawable/black_button" />
 
     <TextView
