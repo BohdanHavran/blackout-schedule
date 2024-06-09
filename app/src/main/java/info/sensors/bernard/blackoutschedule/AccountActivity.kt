@@ -137,6 +137,10 @@ class AccountActivity : AppCompatActivity() {
             inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
         }
 
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+        val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+        val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+
         val spinner: Spinner = findViewById(R.id.AccSelectRegionSpinner)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions)
         spinner.adapter = arrayAdapter
@@ -179,7 +183,7 @@ class AccountActivity : AppCompatActivity() {
             }
         }
 
-        getUserRegion(2) { response ->
+        getUserRegion(currentUsrID) { response ->
             response?.let {
                 try {
                     // Parse the response string into a JSONObject
@@ -232,7 +236,7 @@ class AccountActivity : AppCompatActivity() {
 
                 Log.d("Region Modify", "Try add: addRegion(2, ${1 + regions.indexOf(selectedRegion)})")
 
-                addRegion(2, 1 + regions.indexOf(selectedRegion)) { response ->
+                addRegion(currentUsrID, 1 + regions.indexOf(selectedRegion)) { response ->
                     Log.d("TAG", "onCreate: $response")
                     response?.let {
                         try {
@@ -468,7 +472,14 @@ class AccountActivity : AppCompatActivity() {
 
         val exitButton: ImageButton = findViewById(R.id.AccExitButton)
 
-        exitButton.setOnClickListener{
+        exitButton.setOnClickListener {
+            sharedPreferencesForUser.edit().apply {
+                remove("userData")
+                remove("userRegionCount")
+                apply()
+            }
+            Log.d("AccountActivity", "sharedPreferences after clear, id: $currentUsrID | count: $currentUsrRegionCount")
+
             goToNewActivity = true
             val intent = Intent(this, AuthActivity::class.java)
             startActivity(intent)
@@ -533,7 +544,7 @@ class AccountActivity : AppCompatActivity() {
         }
     }
 
-    fun getUserRegion(userId: Int, callback: (String?) -> Unit) {
+    fun getUserRegion(userId: String?, callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = doInBackgroundGetUserRegion(userId)
             withContext(Dispatchers.Main) {
@@ -542,7 +553,7 @@ class AccountActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun doInBackgroundGetUserRegion(userId: Int): String? {
+    private suspend fun doInBackgroundGetUserRegion(userId: String?): String? {
         val json = JSONObject().apply {
             put("user_id", userId)
         }
@@ -575,7 +586,7 @@ class AccountActivity : AppCompatActivity() {
         }
     }
 
-    fun addRegion(userId: Int, regionId: Int, callback: (String?) -> Unit) {
+    fun addRegion(userId: String?, regionId: Int, callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = doInBackgroundAddRegion(userId, regionId)
             withContext(Dispatchers.Main) {
@@ -584,7 +595,7 @@ class AccountActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun doInBackgroundAddRegion(userId: Int, regionId: Int): String? {
+    private suspend fun doInBackgroundAddRegion(userId: String?, regionId: Int): String? {
         val json = JSONObject().apply {
             put("user_id", userId)
             put("region_id", regionId)
@@ -676,12 +687,37 @@ class AccountActivity : AppCompatActivity() {
             val regionTextView = regionView.findViewById<TextView>(R.id.regionTextView)
             val deleteButton = regionView.findViewById<ImageButton>(R.id.deleteRegionButton)
 
+            val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
+            val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+
             regionTextView.text = region
             regionsContainer.addView(regionView)
 
             deleteButton.setOnClickListener {
                 regionsContainer.removeView(regionView)
                 selectedRegions.remove(region)
+
+                Log.d("Region Modify", "Try remove: removeRegion(2, ${1 + regions.indexOf(region)})")
+
+                removeRegion(currentUsrID.toString().toInt(), 1 + regions.indexOf(region)) { response ->
+                    response?.let {
+                        try {
+
+                        } catch (e: Exception) {
+                            // Handle JSON parsing exceptions
+                            e.printStackTrace()
+                            Log.e("TAG", "Failed to parse JSON response")
+                        }
+                    } ?: run {
+                        // Handle the case where the response is null
+                        Log.e("TAG", "Received null response")
+                    }
+                }
+
+                val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.apply()
             }
 
         } catch (e: Exception) {
