@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AuthActivity">
+
+    <ImageView
+        android:id="@+id/imageViewAuthX1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@color/bg_black_theme_color" />
+
+    <ImageView
+        android:id="@+id/imageViewX4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        app:srcCompat="@drawable/black_logo_bs_2" />
+
+    <ImageButton
+        android:id="@+id/applyButtonRegions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAuthX1"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAuthX1"
+        app:layout_constraintTop_toBottomOf="@+id/ScrollViewX1"
+        app:layout_constraintVertical_bias="0.2"
+        app:srcCompat="@drawable/black_button" />
+
+    <ImageView
+        android:id="@+id/applyButtonNoActive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/black_button_noactive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAuthX1"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAuthX1"
+        app:layout_constraintTop_toBottomOf="@+id/ScrollViewX1"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <TextView
+        android:id="@+id/authButtonTextX1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.1"
+        android:text="Перейти далі"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/applyButtonRegions"
+        app:layout_constraintEnd_toEndOf="@+id/applyButtonRegions"
+        app:layout_constraintStart_toStartOf="@+id/applyButtonRegions"
+        app:layout_constraintTop_toTopOf="@+id/applyButtonRegions" />
+
+    <ImageButton
+        android:id="@+id/skipButtonRegions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAuthX1"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAuthX1"
+        app:layout_constraintTop_toBottomOf="@+id/applyButtonRegions"
+        app:layout_constraintVertical_bias="0.15000002"
+        app:srcCompat="@drawable/black_button" />
+
+    <TextView
+        android:id="@+id/skipButtonTextX1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Пропустити"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/skipButtonRegions"
+        app:layout_constraintEnd_toEndOf="@+id/skipButtonRegions"
+        app:layout_constraintStart_toStartOf="@+id/skipButtonRegions"
+        app:layout_constraintTop_toTopOf="@+id/skipButtonRegions" />
+
+<!-- -->
+
+    <ImageView
+        android:id="@+id/AccBackgroundSelectSpinnerX1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewX4"
+        app:layout_constraintVertical_bias="0.05"
+        app:srcCompat="@drawable/black_select_region_spinner" />
+
+    <Spinner
+        android:id="@+id/AccSelectRegionSpinnerX1"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinnerX1" />
+
+    <ImageButton
+        android:id="@+id/AccAddRegionButtonX1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/AccSelectRegionSpinnerX1"
+        app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinnerX1"
+        app:srcCompat="@drawable/black_button_region_add" />
+
+    <ScrollView
+        android:id="@+id/ScrollViewX1"
+        android:layout_width="400dp"
+        android:layout_height="326dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAuthX1"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAuthX1"
+        app:layout_constraintTop_toBottomOf="@+id/AccSelectRegionSpinnerX1"
+        app:layout_constraintVertical_bias="0.1">
+
+        <LinearLayout
+            android:id="@+id/AccRegionsContainerX1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintVertical_bias="0.03" />
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/regionImageViewActiveX1"
+        android:layout_width="340dp"
+        android:layout_height="36dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black_select_region" />
+
+    <TextView
+        android:id="@+id/regionTextViewActiveX1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black_button_text"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/regionImageViewActiveX1"
+        app:layout_constraintEnd_toStartOf="@+id/deleteRegionButtonActiveX1"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="@+id/regionImageViewActiveX1"
+        app:layout_constraintTop_toTopOf="@+id/regionImageViewActiveX1" />
+
+    <ImageButton
+        android:id="@+id/deleteRegionButtonActiveX1"
+        android:layout_width="35dp"
+        android:layout_height="36dp"
+        android:background="@android:color/transparent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/regionImageViewActiveX1"
+        app:layout_constraintEnd_toEndOf="@+id/regionImageViewActiveX1"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/regionImageViewActiveX1"
+        app:layout_constraintTop_toTopOf="@+id/regionImageViewActiveX1"
+        app:srcCompat="@drawable/black_button_delete_region" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

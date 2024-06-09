@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             click.start()
             click.seekTo(0)
             goToNewActivity = true
-            val intent = Intent(this, AccountActivity::class.java)
+            val intent = Intent(this, RegionsActivity::class.java)
             startActivity(intent)
             // TODO тут мав би бути код для підказки
         }
