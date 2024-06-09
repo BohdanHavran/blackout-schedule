@@ -246,6 +246,7 @@ class AccountActivity : AppCompatActivity() {
                             e.printStackTrace()
                             Log.e("TAG", "Failed to parse JSON response")
                         }
+
                     } ?: run {
                         // Handle the case where the response is null
                         Log.e("TAG", "Received null response")

@@ -227,6 +227,7 @@ class AuthActivity : AppCompatActivity() {
                 } else {
                     inputPassword.error = "Empty fields are not allowed"
                 }
+
             } else if (email.isEmpty()) {
                 inputLogin.error = "Empty fields are not allowed"
             } else {
