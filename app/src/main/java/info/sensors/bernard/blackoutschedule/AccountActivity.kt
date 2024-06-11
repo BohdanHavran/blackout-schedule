@@ -139,7 +139,11 @@ class AccountActivity : AppCompatActivity() {
 
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
+        val currentUsrEmail = sharedPreferencesForUser.getString("userEmail", " ")
         val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+
+        val inputEmail: EditText = findViewById(R.id.AccEmailInput)
+        inputEmail.setText(currentUsrEmail)
 
         val spinner: Spinner = findViewById(R.id.AccSelectRegionSpinner)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions)
@@ -219,7 +223,7 @@ class AccountActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Do nothing
+
             }
 
         }
@@ -231,6 +235,12 @@ class AccountActivity : AppCompatActivity() {
         addRegionButton.setOnClickListener {
             val selectedRegion = spinner.selectedItem.toString()
             Log.d("AccountActivity", "Обрані регіони: $selectedRegion")
+
+            if(selectedRegions.size == 0) {
+                Toast.makeText(this, "Ви не обрали регіон", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (selectedRegions.size < maxRegions && !selectedRegions.contains(selectedRegion)) {
                 selectedRegions.add(selectedRegion)
 
@@ -476,6 +486,7 @@ class AccountActivity : AppCompatActivity() {
         exitButton.setOnClickListener {
             sharedPreferencesForUser.edit().apply {
                 remove("userData")
+                remove("userEmail")
                 remove("userRegionCount")
                 apply()
             }
@@ -491,13 +502,43 @@ class AccountActivity : AppCompatActivity() {
         val editEmailButton: ImageButton = findViewById(R.id.editEmailButton)
 
         editEmailButton.setOnClickListener{
+            changeEmail(currentUsrID, inputEmail.text.toString()) { response ->
+                Log.d("TAG", "Change Email: $response")
+                response?.let {
+                    try {
 
+                    } catch (e: Exception) {
+                        // Handle JSON parsing exceptions
+                        e.printStackTrace()
+                        Log.e("TAG", "Failed to parse JSON response")
+                    }
+
+                } ?: run {
+                    // Handle the case where the response is null
+                    Log.e("TAG", "Received null response")
+                }
+            }
         }
 
         val editPasswordButton: ImageButton = findViewById(R.id.AccEditPasswordButton)
 
         editPasswordButton.setOnClickListener{
+            changePassword(currentUsrID, inputPassword.text.toString()) { response ->
+                Log.d("TAG", "Change Password: $response")
+                response?.let {
+                    try {
 
+                    } catch (e: Exception) {
+                        // Handle JSON parsing exceptions
+                        e.printStackTrace()
+                        Log.e("TAG", "Failed to parse JSON response")
+                    }
+
+                } ?: run {
+                    // Handle the case where the response is null
+                    Log.e("TAG", "Received null response")
+                }
+            }
         }
 
         
@@ -629,6 +670,93 @@ class AccountActivity : AppCompatActivity() {
             null
         }
     }
+
+    fun changePassword(userId: String?, newPassword: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackgroundChangePassword(userId, newPassword)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackgroundChangePassword(userId: String?, newPassword: String): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+            put("new_password", newPassword)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Change_user_pass") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "doInBackground (Add Region): ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d(
+                        "TAG",
+                        "doInBackground (Add Region): ALl Works not in the right direction"
+                    )
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground (Add Region): ALl Not Works")
+            null
+        }
+    }
+
+    fun changeEmail(userId: String?, newEmail: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackgroundChangeEmail(userId, newEmail)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
+
+    private suspend fun doInBackgroundChangeEmail(userId: String?, newEmail: String): String? {
+        val json = JSONObject().apply {
+            put("user_id", userId)
+            put("new_mail", newEmail)
+        }
+
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Change_user_mail") // Replace with the actual URL of your server
+            .post(body)
+            .build()
+
+        return try {
+            val response: Response = client.newCall(request).execute()
+            response.use {
+                if (response.isSuccessful) {
+                    Log.d("TAG", "doInBackground (Add Region): ALl Works")
+                    response.body?.string()
+                } else {
+                    Log.d(
+                        "TAG",
+                        "doInBackground (Add Region): ALl Works not in the right direction"
+                    )
+                    null
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground (Add Region): ALl Not Works")
+            null
+        }
+    }
+
 
     fun removeRegion(userId: Int, regionId: Int, callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
