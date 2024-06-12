@@ -99,8 +99,8 @@ class AccountActivity : AppCompatActivity() {
         bindMusicService()
         val sharedPreferencesForMusic = getSharedPreferences("SoundState", Context.MODE_PRIVATE)
         val clickSound = sharedPreferencesForMusic.getFloat("buttonSound", 1f)
-        click.setVolume(clickSound, clickSound)
         val sharedPreferencesForFade = getSharedPreferences("Fade", Context.MODE_PRIVATE)
+        click.setVolume(clickSound, clickSound)
 
         val sharedPreferencesBrightness = getSharedPreferences("Brightness", Context.MODE_PRIVATE)
         if (sharedPreferencesBrightness.getBoolean("isUsingManualBrightness", false)){
@@ -110,13 +110,6 @@ class AccountActivity : AppCompatActivity() {
             layoutParams.screenBrightness = brightnessValue
             window.attributes = layoutParams
         }
-
-//        val sharedPreferencesForBrigthness = getSharedPreferences("Brigthness", Context.MODE_PRIVATE)
-//        val Brigthness = sharedPreferencesForBrigthness.getFloat("brigthnessValue", 1f)
-//        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-//        val layoutParams = window.attributes
-//        layoutParams.screenBrightness = Brigthness
-//        window.attributes = layoutParams
 
         val inputPassword: EditText = findViewById(R.id.AccPasswordInput)
 
@@ -137,13 +130,19 @@ class AccountActivity : AppCompatActivity() {
             inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
         }
 
+
+        val addRegionButton: ImageButton = findViewById(R.id.AccAddRegionButton)
+
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
         val currentUsrEmail = sharedPreferencesForUser.getString("userEmail", " ")
+        val currentUsrPassword = sharedPreferencesForUser.getString("userPassword", " ")
         val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
 
         val inputEmail: EditText = findViewById(R.id.AccEmailInput)
+
         inputEmail.setText(currentUsrEmail)
+        inputPassword.setText(currentUsrPassword)
 
         val spinner: Spinner = findViewById(R.id.AccSelectRegionSpinner)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, regions)
@@ -151,6 +150,7 @@ class AccountActivity : AppCompatActivity() {
 
         getRegions { response ->
             response?.let {
+                Log.d("DEBUG", "Starting getRegions request")
                 try {
                     // Parse the response string into a JSONObject
                     val jsonResponse = JSONObject(it)
@@ -162,13 +162,13 @@ class AccountActivity : AppCompatActivity() {
                         val key = keys.next()
                         val regionObject = jsonResponse.getJSONObject(key)
                         val region = regionObject.getString("region")
-                        Log.d("ADDREGION TO REGIONS", "Region: " + region)
                         regionsList.add(region)
                     }
 
                     // Convert the MutableList to an array
                     regions = regionsList.toTypedArray()
-                    Log.d("ADDREGION TO REGIONS", "Add all regions: " + regions.contentToString())
+
+                    addRegionButton.isEnabled = regions.isNotEmpty()
 
                     // Update the spinner's adapter
                     runOnUiThread {
@@ -230,16 +230,9 @@ class AccountActivity : AppCompatActivity() {
 
         regionsContainer = findViewById(R.id.AccRegionsContainer)
 
-        val addRegionButton: ImageButton = findViewById(R.id.AccAddRegionButton)
-
         addRegionButton.setOnClickListener {
             val selectedRegion = spinner.selectedItem.toString()
             Log.d("AccountActivity", "Обрані регіони: $selectedRegion")
-
-            if(selectedRegions.size == 0) {
-                Toast.makeText(this, "Ви не обрали регіон", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
 
             if (selectedRegions.size < maxRegions && !selectedRegions.contains(selectedRegion)) {
                 selectedRegions.add(selectedRegion)
@@ -432,6 +425,7 @@ class AccountActivity : AppCompatActivity() {
                                 newIndex = i
                                 break
                             }
+
                         }
 
                         regionsContainer.removeViewAt(regionsContainer.indexOfChild(regionImageView.parent as View))
@@ -497,25 +491,39 @@ class AccountActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+
         }
 
         val editEmailButton: ImageButton = findViewById(R.id.editEmailButton)
+        val editor = sharedPreferencesForUser.edit()
 
         editEmailButton.setOnClickListener{
-            changeEmail(currentUsrID, inputEmail.text.toString()) { response ->
-                Log.d("TAG", "Change Email: $response")
-                response?.let {
-                    try {
+            val email = inputEmail.text.toString()
+            if (email == sharedPreferencesForUser.getString("userEmail", " ")) {
+                Toast.makeText(this, "Ви не можете використовувати таку саму пошту", Toast.LENGTH_SHORT).show()
+            } else {
+                changeEmail(currentUsrID, email) { response ->
+                    response?.let {
+                        try {
 
-                    } catch (e: Exception) {
-                        // Handle JSON parsing exceptions
-                        e.printStackTrace()
-                        Log.e("TAG", "Failed to parse JSON response")
+                        } catch (e: Exception) {
+                            // Handle JSON parsing exceptions
+                            e.printStackTrace()
+                            Log.e("TAG", "Failed to parse JSON response")
+                        }
+
+                        Toast.makeText(
+                            this,
+                            "Ви успішно змінили електронну пошту",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        editor.putString("userEmail", email)
+                        editor.apply()
+
+                    } ?: run {
+                        // Handle the case where the response is null
+                        Log.e("TAG", "Received null response")
                     }
-
-                } ?: run {
-                    // Handle the case where the response is null
-                    Log.e("TAG", "Received null response")
                 }
             }
         }
@@ -523,20 +531,28 @@ class AccountActivity : AppCompatActivity() {
         val editPasswordButton: ImageButton = findViewById(R.id.AccEditPasswordButton)
 
         editPasswordButton.setOnClickListener{
-            changePassword(currentUsrID, inputPassword.text.toString()) { response ->
-                Log.d("TAG", "Change Password: $response")
-                response?.let {
-                    try {
+            val password = inputPassword.text.toString()
+            if (password == sharedPreferencesForUser.getString("userPassword", " ")) {
+                Toast.makeText(this, "Ви не можете використовувати такий самий пароль", Toast.LENGTH_SHORT).show()
+            } else {
+                changePassword(currentUsrID, password) { response ->
+                    response?.let {
+                        try {
 
-                    } catch (e: Exception) {
-                        // Handle JSON parsing exceptions
-                        e.printStackTrace()
-                        Log.e("TAG", "Failed to parse JSON response")
+                        } catch (e: Exception) {
+                            // Handle JSON parsing exceptions
+                            e.printStackTrace()
+                            Log.e("TAG", "Failed to parse JSON response")
+                        }
+
+                        Toast.makeText(this, "Ви успішно змінили пароль", Toast.LENGTH_SHORT).show()
+                        editor.putString("userPassword", password)
+                        editor.apply()
+
+                    } ?: run {
+                        // Handle the case where the response is null
+                        Log.e("TAG", "Received null response")
                     }
-
-                } ?: run {
-                    // Handle the case where the response is null
-                    Log.e("TAG", "Received null response")
                 }
             }
         }
@@ -569,19 +585,18 @@ class AccountActivity : AppCompatActivity() {
 
         return try {
             val response: Response = client.newCall(request).execute()
-            response.use {
-                if (response.isSuccessful) {
-                    Log.d("TAG", "Regions doInBackground: ALl Works")
-                    response.body?.string()
-                } else {
-                    Log.d("TAG", "Regions doInBackground: ALl Works not in the right direction")
-                    null
-                }
+
+            if (response.isSuccessful) {
+                Log.d("TAG", "Regions doInBackground: ALl Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "Regions doInBackground: ALl Works not in the right direction")
+                null
             }
+
         } catch (e: IOException) {
             e.printStackTrace()
             Log.d("TAG", "Regions doInBackground: ALl Not Works")
-            doInBackground()
             null
         }
     }
