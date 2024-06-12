@@ -14,6 +14,11 @@
     <string name="main_saved_text">Зекономлено</string>
     <string name="main_account_button_text">Аккаунт</string>
     <string name="main_settings_button_text">Налаштування</string>
+    <string name="main_disconnect_text2">До можливого відключення</string>
+    <string name="main_disconnect_text3">Електро енергія точно буде через</string>
+    <string name="last_string">Це останій регіон</string>
+    <string name="first_string">Це перший регіон</string>
+    <string name="Тернопільська">Тернопільська область</string>
     <string name="Львівська">Лвівська область</string>
     <string name="account_settings_text">Налаштування користувача</string>
     <string name="account_regions_text">Обрані області</string>
@@ -26,8 +31,4 @@
     <string name="regions_button_next_text">Перейти далі</string>
     <string name="info_text">ЩО ТУТ РОБИТИ?</string>
     <string name="info_button_back_text">ДОПОБАЧЕННЯ</string>
-    <string name="main_disconnect_text2">До можливого відключення</string>
-    <string name="main_disconnect_text3">Електро енергія точно буде через</string>
-    <string name="last_string">Це останій регіон</string>
-    <string name="first_string">Це перший регіон</string>
 </resources>
