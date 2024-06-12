@@ -172,6 +172,7 @@ class AuthActivity : AppCompatActivity() {
                                                         val editor = sharedPreferencesForUser.edit()
                                                         editor.putString("userData", userID)
                                                         editor.putString("userEmail", email)
+                                                        editor.putString("userPassword", password)
                                                         editor.putInt("userRegionCount", message.toInt())
                                                         editor.apply()
                                                         goToNewActivity = true
@@ -190,6 +191,7 @@ class AuthActivity : AppCompatActivity() {
                                                         val editor = sharedPreferencesForUser.edit()
                                                         editor.putString("userData", userID)
                                                         editor.putString("userEmail", email)
+                                                        editor.putString("userPassword", password)
                                                         editor.putInt("userRegionCount", message.toInt())
                                                         editor.apply()
                                                         goToNewActivity = true

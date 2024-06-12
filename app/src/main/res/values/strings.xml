@@ -13,10 +13,21 @@
     <string name="main_saved_text">Saved</string>
     <string name="main_account_button_text">Account</string>
     <string name="main_settings_button_text">Settings</string>
-    <string name="Львівська">region</string>
     <string name="main_disconnect_text2">to a possible shutdown</string>
     <string name="main_disconnect_text3">electricity will definitely be</string>
     <string name="last_string">This is last region</string>
     <string name="first_string">This is first region</string>
     <string name="Тернопільська">Ternopil region</string>
+    <string name="Львівська">Lviv region</string>
+    <string name="account_settings_text">User settings</string>
+    <string name="account_regions_text">Selected regions</string>
+    <string name="account_button_change_text">Edit</string>
+    <string name="account_button_back_text">Back</string>
+    <string name="account_button_exit_text">Exit</string>
+    <string name="auth_button_register">Register</string>
+    <string name="auth_button_authorization">Authorization</string>
+    <string name="auth_button_skip">Skip</string>
+    <string name="regions_button_next_text">Go next</string>
+    <string name="info_text">INFORMATION</string>
+    <string name="info_button_back_text">BACK</string>
 </resources>
