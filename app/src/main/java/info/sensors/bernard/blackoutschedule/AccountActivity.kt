@@ -256,6 +256,12 @@ class AccountActivity : AppCompatActivity() {
                     }
                 }
 
+                val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.apply()
+
+
                 addRegionView(selectedRegion)
 
             } else {
@@ -482,6 +488,7 @@ class AccountActivity : AppCompatActivity() {
                 remove("userData")
                 remove("userEmail")
                 remove("userRegionCount")
+                remove("CurrentSelectedRegion")
                 apply()
             }
             Log.d("AccountActivity", "sharedPreferences after clear, id: $currentUsrID | count: $currentUsrRegionCount")
@@ -860,7 +867,7 @@ class AccountActivity : AppCompatActivity() {
 
                 val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
                 val editor = sharedPreferencesForUser.edit()
-                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount - 1)
                 editor.apply()
             }
 
