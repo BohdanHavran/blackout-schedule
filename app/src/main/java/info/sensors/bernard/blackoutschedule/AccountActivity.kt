@@ -494,6 +494,7 @@ class AccountActivity : AppCompatActivity() {
                 remove("userData")
                 remove("userEmail")
                 remove("userRegionCount")
+                remove("CurrentSelectedRegion")
                 apply()
             }
             Log.d("AccountActivity", "sharedPreferences after clear, id: $currentUsrID | count: $currentUsrRegionCount")

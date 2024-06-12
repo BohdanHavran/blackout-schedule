@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
+import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import android.view.View
@@ -75,7 +77,8 @@ class MainActivity : AppCompatActivity() {
         musicService?.setMusicVolume(value)
     }
 
-
+    var selectedGroup = "1"
+    var selectedDotGroup = "1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +115,11 @@ class MainActivity : AppCompatActivity() {
         val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
         val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
         val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
+        val buttonFirstDotGroup: ImageButton = findViewById(R.id.dotGroup1Button)
+        val buttonSecondDotGroup: ImageButton = findViewById(R.id.dotGroup2Button)
         val buttonAccount: ImageButton = findViewById(R.id.accountButton)
+        val buttonNextRegion: ImageButton = findViewById(R.id.nextRegionButton)
+        val buttonPreviousRegion: ImageButton = findViewById(R.id.previousRegionButton)
 
         val textData: TextView = findViewById(R.id.textView2)
 
@@ -169,9 +176,10 @@ class MainActivity : AppCompatActivity() {
             buttonFirstGroup.alpha = 1f
             buttonSecondGroup.alpha = 0.5f
             buttonThirdGroup.alpha = 0.5f
+            selectedGroup = "1"
             // TODO тут мав би бути код для вибору 1 групи
-            setRegionNewData("12", "Група 1.1")
-            changeUserRegion("Група 1.1")
+            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            changeUserRegion("Група $selectedGroup.$selectedDotGroup")
 
         }
 
@@ -181,9 +189,10 @@ class MainActivity : AppCompatActivity() {
             buttonFirstGroup.alpha = 0.5f
             buttonSecondGroup.alpha = 1f
             buttonThirdGroup.alpha = 0.5f
+            selectedGroup = "2"
             // TODO тут мав би бути код для вибору 2 групи
-            setRegionNewData("12", "Група 2.1")
-            changeUserRegion("Група 2.1")
+            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
         buttonThirdGroup.setOnClickListener {
@@ -192,15 +201,75 @@ class MainActivity : AppCompatActivity() {
             buttonFirstGroup.alpha = 0.5f
             buttonSecondGroup.alpha = 0.5f
             buttonThirdGroup.alpha = 1f
+            selectedGroup = "3"
             // TODO тут мав би бути код для вибору 3 групи
-            setRegionNewData("12", "Група 3.1")
-            changeUserRegion("Група 3.1")
+            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            changeUserRegion("Група $selectedGroup.$selectedDotGroup")
+        }
 
+        buttonFirstDotGroup.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            buttonSecondDotGroup.alpha = 0.5f
+            buttonFirstDotGroup.alpha = 1f
+            selectedDotGroup = "1"
+            // TODO тут мав би бути код для вибору 3 групи
+            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            changeUserRegion("Група $selectedGroup.$selectedDotGroup")
+        }
+
+        buttonSecondDotGroup.setOnClickListener {
+            click.start()
+            click.seekTo(0)
+            buttonSecondDotGroup.alpha = 1f
+            buttonFirstDotGroup.alpha =  0.5f
+            selectedDotGroup = "2"
+            // TODO тут мав би бути код для вибору 3 групи
+            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
 
+        val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
 
-        getUserRegion()
+        val currentSelectedRegionNumber = sharedPreferencesForUser.getInt("CurrentSelectedRegion", 0)
+        val currentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+
+        getUserRegion(currentSelectedRegionNumber)
+
+        Log.d("TAG", "onCreate::: $currentSelectedRegionNumber")
+
+
+
+        buttonNextRegion.setOnClickListener {
+
+            val currentSelectedRegionNumber2 = sharedPreferencesForUser.getInt("CurrentSelectedRegion", 0)
+            if (currentSelectedRegionNumber2 < currentUsrRegionCount- 1){
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("CurrentSelectedRegion", currentSelectedRegionNumber2 + 1)
+                editor.apply()
+                getUserRegion(currentSelectedRegionNumber2 + 0)
+            }
+            else{
+                Log.d("TAG", "onCreate: This is last region :: " + currentSelectedRegionNumber2)
+                Toast.makeText(this, getString(R.string.last_string), Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        buttonPreviousRegion.setOnClickListener {
+            val currentSelectedRegionNumber2 = sharedPreferencesForUser.getInt("CurrentSelectedRegion", 0)
+            if (currentSelectedRegionNumber2 > 0){
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("CurrentSelectedRegion", currentSelectedRegionNumber2 - 1)
+                editor.apply()
+                getUserRegion(currentSelectedRegionNumber2 - 1)
+            }
+            else{
+                Log.d("TAG", "onCreate: This is first region ::" + currentSelectedRegionNumber2)
+                Toast.makeText(this, getString(R.string.first_string), Toast.LENGTH_SHORT).show()
+            }
+
+        }
 
         //setRegionNewData()
 
@@ -211,7 +280,14 @@ class MainActivity : AppCompatActivity() {
         .writeTimeout(100, TimeUnit.SECONDS)
         .readTimeout(100, TimeUnit.SECONDS)
         .build()
+
     fun getUserRegion(groupCount: Int = 0){
+        val buttonFirstGroup: ImageButton = findViewById(R.id.groupFirstButton)
+        val buttonSecondGroup: ImageButton = findViewById(R.id.groupSecondButton)
+        val buttonThirdGroup: ImageButton = findViewById(R.id.groupThirdButton)
+        val buttonFirstDotGroup: ImageButton = findViewById(R.id.dotGroup1Button)
+        val buttonSecondDotGroup: ImageButton = findViewById(R.id.dotGroup2Button)
+
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
 
@@ -239,6 +315,31 @@ class MainActivity : AppCompatActivity() {
                         val groupId = groupData.getInt("region_id")
                         Log.d("TAG", "getUserRegion: $groupName,   $groupId")
                         setRegionNewData(groupId.toString(), groupName)
+                        setTimeTo(groupName, groupId.toString())
+
+                        selectedGroup = groupName[groupName.length - 3].toString()
+                        selectedDotGroup= groupName[groupName.length - 1].toString()
+
+                        Log.d("TAG", "getUserRegion: $selectedGroup\t$selectedDotGroup")
+
+
+                        buttonFirstGroup.alpha = 0.5f
+                        buttonSecondGroup.alpha = 0.5f
+                        buttonThirdGroup.alpha = 0.5f
+                        buttonFirstDotGroup.alpha = 0.5f
+                        buttonSecondDotGroup.alpha = 0.5f
+
+                        when(selectedGroup){
+                            "1" -> buttonFirstGroup.alpha = 1f
+                            "2" -> buttonSecondGroup.alpha = 1f
+                            "3" -> buttonThirdGroup.alpha = 1f
+                            else -> null
+                        }
+                        when(selectedDotGroup){
+                            "1" -> buttonFirstDotGroup.alpha = 1f
+                            "2" -> buttonSecondDotGroup.alpha = 1f
+                            else -> null
+                        }
 
                     } catch (e: Exception) {
                         // Handle JSON parsing exceptions
@@ -253,6 +354,162 @@ class MainActivity : AppCompatActivity() {
                     Log.e("TAG", "Received null response")
                 }
             }
+        }
+    }
+    private fun setTimerData(targetTimeString: String, eventType: Int) {
+        val textViewCountdown: TextView = findViewById(R.id.countdownTimerText)
+        val textViewCountdownBottomText: TextView = findViewById(R.id.textView5)
+
+        // Формат для часу
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        // Отримуємо поточний час
+        val currentTime = Calendar.getInstance()
+
+        // Парсимо час цільового заходу
+        val targetDate = timeFormat.parse(targetTimeString)
+
+        if (targetDate != null) {
+            // Встановлюємо годину, хвилину і секунду в цільовому часі
+            val targetTime = Calendar.getInstance().apply {
+                time = targetDate
+                set(Calendar.YEAR, currentTime.get(Calendar.YEAR))
+                set(Calendar.MONTH, currentTime.get(Calendar.MONTH))
+                set(Calendar.DAY_OF_MONTH, currentTime.get(Calendar.DAY_OF_MONTH))
+
+                // Якщо цільовий час вже пройшов сьогодні, додаємо один день
+                if (before(currentTime)) {
+                    add(Calendar.DAY_OF_MONTH, 1)
+                }
+            }
+
+            // Обчислюємо різницю в мілісекундах між поточним часом і цільовим часом
+            val diffInMillis = targetTime.timeInMillis - currentTime.timeInMillis
+
+            // Запускаємо CountDownTimer
+            object : CountDownTimer(diffInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val hours = millisUntilFinished / (1000 * 60 * 60)
+                    val minutes = (millisUntilFinished / (1000 * 60)) % 60
+                    val seconds = (millisUntilFinished / 1000) % 60
+
+                    // Форматуємо час у форматі гг:хх:сс
+                    val timeLeft = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                    textViewCountdown.text = timeLeft
+                }
+
+                override fun onFinish() {
+                    textViewCountdown.text = "00:00:00"
+                }
+            }.start()
+        } else {
+            textViewCountdown.text = "Invalid target time"
+        }
+        val color = when (eventType) {
+            0 -> Color.parseColor("#FFC1AD")
+            1 -> Color.RED
+            else -> Color.GREEN
+        }
+        textViewCountdown.setTextColor(color)
+        textViewCountdownBottomText.setTextColor(color)
+        when (eventType){
+            0 -> {
+                textViewCountdown.text =  getString(R.string.main_disconnect_text2)
+                textViewCountdownBottomText.text =  getString(R.string.main_disconnect_text2)
+            }
+            1 ->{
+                textViewCountdown.text =  getString(R.string.main_disconnect_text)
+                textViewCountdownBottomText.text =  getString(R.string.main_disconnect_text)
+            }
+            else -> {
+                textViewCountdown.text =  getString(R.string.main_disconnect_text3)
+                textViewCountdownBottomText.text =  getString(R.string.main_disconnect_text3)
+            }
+        }
+    }
+    private fun hasEightHourInterval(startTimeString: String, endTimeString: String): Boolean {
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        val startTime = timeFormat.parse(startTimeString)
+        val endTime = timeFormat.parse(endTimeString)
+
+        if (startTime != null && endTime != null) {
+            // Отримуємо календарний об'єкт для обох часових точок
+            val startCalendar = Calendar.getInstance().apply { time = startTime }
+            val endCalendar = Calendar.getInstance().apply { time = endTime }
+
+            // Обчислюємо різницю в мілісекундах між двома часами
+            var diffInMillis = endCalendar.timeInMillis - startCalendar.timeInMillis
+
+            // Якщо різниця негативна, додаємо один день до кінцевого часу
+            if (diffInMillis < 0) {
+                endCalendar.add(Calendar.DAY_OF_MONTH, 1)
+                diffInMillis = endCalendar.timeInMillis - startCalendar.timeInMillis
+            }
+
+            // Перевіряємо, чи різниця більше або дорівнює 8 годин (у мілісекундах)
+            val eightHoursInMillis = 8 * 60 * 60 * 1000
+            return diffInMillis >= eightHoursInMillis
+        }
+
+        return false
+    }
+    fun setTimeTo(groupName: String, regionId: String){
+        getTimeToNextEvent(groupName, regionId) {response ->
+            response?.let {
+                try {
+                    Log.d("TAG", "setTimeTo: $response")
+
+
+                    val jsonArray = JSONArray(it)
+                    val jsonObject = jsonArray.getJSONObject(0)
+                    val startTime = jsonObject.getString("start")
+                    val possible = jsonObject.getString("possible")
+
+
+
+
+                    val currentTimeValue = Calendar.getInstance().time
+                    val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    val currentTime = formatter.format(currentTimeValue)
+
+                    Log.d("TAG", "setTimeTo: current Time : $currentTime  to time : $startTime")
+
+
+
+
+                    if (hasEightHourInterval(currentTime, startTime)){
+                        subtractHours(startTime, 8)?.let { it1 -> setTimerData(it1, 2) }
+                    }
+                    else {
+                        setTimerData(startTime, possible.toInt())
+                    }
+
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("TAG", "Failed to parse JSON response")
+                }
+            } ?: run {
+                Log.e("TAG", "Received null response")
+                setTimeTo(groupName, regionId)
+            }
+        }
+
+    }
+    private fun subtractHours(timeString: String, hoursToSubtract: Int): String? {
+        val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        val initialTime = timeFormat.parse(timeString)
+
+        return if (initialTime != null) {
+            val calendar = Calendar.getInstance().apply {
+                time = initialTime
+                add(Calendar.HOUR_OF_DAY, -hoursToSubtract)
+            }
+            timeFormat.format(calendar.time)
+        } else {
+            null
         }
     }
     fun setRegionNewData(region: String = "12", group: String = "Група 1.1"){
@@ -280,6 +537,8 @@ class MainActivity : AppCompatActivity() {
 
                             val textRegionForReplace: TextView = findViewById(R.id.textView3)
                             textRegionForReplace.text =  getString(R.string.Львівська)
+
+                            setTimeTo(group, region.toString())
 
                             val imageForReplace: ImageView = findViewById(R.id.imageView9)
                             Picasso.get()
@@ -357,6 +616,14 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    fun getTimeToNextEvent(groupName: String, regionId: String, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = doInBackground4(groupName, regionId)
+            withContext(Dispatchers.Main) {
+                callback(response)
+            }
+        }
+    }
     fun getAllGroups(callback: (String?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = doInBackground()
@@ -381,7 +648,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    private suspend fun doInBackground4(groupName: String, regionId: String): String? {
+        val json = JSONObject().apply {
+            put("group_name", groupName)
+            put("region_id", regionId)
+        }
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val request = Request.Builder()
+            .url("http://34.159.225.88/Get_group_time")
+            .post(body)
+            .build()
+        return try {
+            val response: Response = client.newCall(request).execute()
+            if (response.isSuccessful) {
+                Log.d("TAG", "doInBackground4: doInBackground4 Works")
+                response.body?.string()
+            } else {
+                Log.d("TAG", "doInBackground4: ALl Works not in the right direction")
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.d("TAG", "doInBackground4: ALl Not Works")
+            null
+        }
+    }
     private suspend fun doInBackground(): String? {
         //val json = JSONObject().apply {}
         //val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
