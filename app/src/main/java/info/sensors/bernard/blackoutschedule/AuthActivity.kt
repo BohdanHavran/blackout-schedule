@@ -224,6 +224,7 @@ class AuthActivity : AppCompatActivity() {
                             }
                         } ?: run {
                             Log.e("TAG", "Received null response")
+
                         }
                     }
                 } else {

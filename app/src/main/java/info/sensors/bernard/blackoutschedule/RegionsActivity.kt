@@ -598,7 +598,7 @@ class RegionsActivity : AppCompatActivity() {
 
                 val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
                 val editor = sharedPreferencesForUser.edit()
-                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount - 1)
                 editor.apply()
                 checkApplyButton()
 
