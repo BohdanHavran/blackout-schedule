@@ -1,0 +1,129 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+class MainActivity {
+    - goToNewActivity: Boolean
+    - musicService: MusicService?
+    - isBound: Boolean
+
+    ..Methods..
+    + onCreate(savedInstanceState: Bundle)
+    + onStart()
+    + onResume()
+    + onPause()
+    + onStop()
+    + onDestroy()
+    + onPlayButtonClick()
+    + onStopButtonClick()
+}
+
+MainActivity --> ServiceConnection : uses
+MainActivity --> MusicService : uses
+
+
+class SettingsActivity {
+    - goToNewActivity: Boolean
+    - musicService: MusicService?
+    - isBound: Boolean
+
+    ..Methods..
+    + onCreate(savedInstanceState: Bundle)
+    + onStart()
+    + onResume()
+    + onPause()
+    + onStop()
+    + onDestroy()
+    + onPlayButtonClick()
+    + onPauseButtonClick()
+    + bindMusicService()
+    + setVolume(sound: Int)
+}
+class MusicService {
+        - MediaPlayer? mediaPlayer
+        - MusicBinder binder
+        + IBinder onBind(Intent intent)
+        + int onStartCommand(Intent? intent, int flags, int startId)
+        + void setMusicVolume(int volume)
+
+
+    }
+class MusicBinder {
+            + MusicService getService()
+        }
+
+class ServiceConnection {
+    ..Methods..
+    + onServiceConnected(className: ComponentName, service: IBinder)
+    + onServiceDisconnected(arg0: ComponentName)
+}
+
+SettingsActivity --> ServiceConnection : uses
+SettingsActivity --> MusicService : uses
+
+
+class AuthActivity {
+        - var goToNewActivity: Boolean
+        - var musicService: MusicService?
+        - var isBound: Boolean
+        --
+        + onCreate(savedInstanceState: Bundle): void
+        + onStart(): void
+        + onStop(): void
+        + onDestroy(): void
+        + onPlayButtonClick(): void
+        + onPauseButtonClick(): void
+        + performLogin(login: String, password: String): void
+        + handleLoginResponse(response: String): void
+        --
+        - connection: ServiceConnection
+    }
+
+
+
+
+AuthActivity --> ServiceConnection : uses
+AuthActivity --> MusicService : uses
+
+class RegionsActivity {
+        - var goToNewActivity: Boolean
+        - var musicService: MusicService?
+        - var isBound: Boolean
+        --
+        + onCreate(savedInstanceState: Bundle): void
+        + onStart(): void
+        + onStop(): void
+        + onDestroy(): void
+        + onPlayButtonClick(): void
+        + onPauseButtonClick(): void
+        + fetchData(): void
+        + handleResponse(response: String): void
+        + setRegionSpinner(): void
+        --
+        - connection: ServiceConnection
+    }
+
+RegionsActivity --> ServiceConnection : uses
+RegionsActivity --> MusicService : uses
+
+class AccountActivity {
+        - var goToNewActivity: Boolean
+        - var musicService: MusicService?
+        - var isBound: Boolean
+        --
+        + onCreate(savedInstanceState: Bundle): void
+        + onStart(): void
+        + onStop(): void
+        + onDestroy(): void
+        + onPlayButtonClick(): void
+        + onPauseButtonClick(): void
+        + updateAccountDetails(): void
+        + handleUpdateResponse(response: String): void
+        --
+        - connection: ServiceConnection
+    }
+
+AccountActivity --> ServiceConnection : uses
+AccountActivity --> MusicService : uses
+
+MusicService <-- MusicBinder
+
+@enduml

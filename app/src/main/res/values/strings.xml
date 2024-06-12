@@ -13,9 +13,10 @@
     <string name="main_saved_text">Saved</string>
     <string name="main_account_button_text">Account</string>
     <string name="main_settings_button_text">Settings</string>
-    <string name="Львівська">Lviv region</string>
+    <string name="Львівська">region</string>
     <string name="main_disconnect_text2">to a possible shutdown</string>
     <string name="main_disconnect_text3">electricity will definitely be</string>
     <string name="last_string">This is last region</string>
     <string name="first_string">This is first region</string>
+    <string name="Тернопільська">Ternopil region</string>
 </resources>

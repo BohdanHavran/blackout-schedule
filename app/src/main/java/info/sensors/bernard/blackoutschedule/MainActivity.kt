@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 0.5f
             selectedGroup = "1"
             // TODO тут мав би бути код для вибору 1 групи
-            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            setRegionNewData("$selectedUserGroup", "Група $selectedGroup.$selectedDotGroup")
             changeUserRegion("Група $selectedGroup.$selectedDotGroup")
 
         }
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 0.5f
             selectedGroup = "2"
             // TODO тут мав би бути код для вибору 2 групи
-            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            setRegionNewData("$selectedUserGroup", "Група $selectedGroup.$selectedDotGroup")
             changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
@@ -203,7 +203,7 @@ class MainActivity : AppCompatActivity() {
             buttonThirdGroup.alpha = 1f
             selectedGroup = "3"
             // TODO тут мав би бути код для вибору 3 групи
-            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            setRegionNewData("$selectedUserGroup", "Група $selectedGroup.$selectedDotGroup")
             changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity() {
             buttonFirstDotGroup.alpha = 1f
             selectedDotGroup = "1"
             // TODO тут мав би бути код для вибору 3 групи
-            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            setRegionNewData("$selectedUserGroup", "Група $selectedGroup.$selectedDotGroup")
             changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             buttonFirstDotGroup.alpha =  0.5f
             selectedDotGroup = "2"
             // TODO тут мав би бути код для вибору 3 групи
-            setRegionNewData("12", "Група $selectedGroup.$selectedDotGroup")
+            setRegionNewData("$selectedUserGroup", "Група $selectedGroup.$selectedDotGroup")
             changeUserRegion("Група $selectedGroup.$selectedDotGroup")
         }
 
@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity() {
                 val editor = sharedPreferencesForUser.edit()
                 editor.putInt("CurrentSelectedRegion", currentSelectedRegionNumber2 + 1)
                 editor.apply()
-                getUserRegion(currentSelectedRegionNumber2 + 0)
+                getUserRegion(currentSelectedRegionNumber2 + 1)
             }
             else{
                 Log.d("TAG", "onCreate: This is last region :: " + currentSelectedRegionNumber2)
@@ -275,6 +275,7 @@ class MainActivity : AppCompatActivity() {
 
         hideUi()
     }
+    var selectedUserGroup: Int = 0
     private val client = OkHttpClient.Builder()
         .connectTimeout(100, TimeUnit.SECONDS)
         .writeTimeout(100, TimeUnit.SECONDS)
@@ -313,6 +314,7 @@ class MainActivity : AppCompatActivity() {
                         val groupData = groups.getJSONObject(groupCount)
                         val groupName = groupData.getString("group_name")
                         val groupId = groupData.getInt("region_id")
+                        selectedUserGroup = groupId.toInt()
                         Log.d("TAG", "getUserRegion: $groupName,   $groupId")
                         setRegionNewData(groupId.toString(), groupName)
                         setTimeTo(groupName, groupId.toString())
@@ -536,7 +538,7 @@ class MainActivity : AppCompatActivity() {
 
 
                             val textRegionForReplace: TextView = findViewById(R.id.textView3)
-                            textRegionForReplace.text =  getString(R.string.Львівська)
+                            textRegionForReplace.text =  regionName + " " + getString(R.string.Львівська)
 
                             setTimeTo(group, region.toString())
 
@@ -591,6 +593,7 @@ class MainActivity : AppCompatActivity() {
                         val groupId = groupData.getInt("region_id")
                         Log.d("TAG", "getUserRegionuytre: |$currentUsrID|\t|$groupId|\t|$groupName|\t|$region|")
 
+                        setTimeTo(groupName, groupId.toString())
                         changeUserRegion(currentUsrID, groupId.toString(), groupName, region) {response ->
 
                         }
