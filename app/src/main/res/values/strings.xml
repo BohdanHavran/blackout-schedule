@@ -25,4 +25,5 @@
     <string name="regions_button_next_text">Go next</string>
     <string name="info_text">INFORMATION</string>
     <string name="info_button_back_text">BACK</string>
+    <string name="account_button_add_text">Add</string>
 </resources>

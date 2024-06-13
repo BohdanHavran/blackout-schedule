@@ -351,7 +351,7 @@
         android:id="@+id/AccEditRegionButtonText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/account_button_change_text"
+        android:text="@string/account_button_add_text"
         android:textColor="@color/black_button_text"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -362,8 +362,8 @@
 
     <ImageView
         android:id="@+id/AccBackgroundSelectSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="218dp"
+        android:layout_height="37dp"
         app:layout_constraintBottom_toBottomOf="@+id/AccActivityBackgroundImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.185"
@@ -372,26 +372,16 @@
         app:layout_constraintVertical_bias="0.035"
         app:srcCompat="@drawable/black_select_region_spinner" />
 
+
     <Spinner
         android:id="@+id/AccSelectRegionSpinner"
-        android:layout_width="180dp"
-        android:layout_height="35dp"
+        android:layout_width="220dp"
+        android:layout_height="33dp"
         app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinner"
         app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinner"
-        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/AccBackgroundSelectSpinner"
         app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinner" />
-
-    <ImageButton
-        android:id="@+id/AccAddRegionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/AccBackgroundSelectSpinner"
-        app:layout_constraintEnd_toEndOf="@+id/AccBackgroundSelectSpinner"
-        app:layout_constraintStart_toEndOf="@+id/AccSelectRegionSpinner"
-        app:layout_constraintTop_toTopOf="@+id/AccBackgroundSelectSpinner"
-        app:srcCompat="@drawable/black_button_region_add" />
 
     <ScrollView
         android:id="@+id/ScrollView"
@@ -418,7 +408,6 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/black_select_region" />

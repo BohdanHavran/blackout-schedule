@@ -131,7 +131,7 @@ class AccountActivity : AppCompatActivity() {
         }
 
 
-        val addRegionButton: ImageButton = findViewById(R.id.AccAddRegionButton)
+        val addRegionButton: ImageButton = findViewById(R.id.AccEditRegionButton)
 
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
@@ -255,6 +255,12 @@ class AccountActivity : AppCompatActivity() {
                         Log.e("TAG", "Received null response")
                     }
                 }
+
+                val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
+                val editor = sharedPreferencesForUser.edit()
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.apply()
+
 
                 addRegionView(selectedRegion)
 
@@ -482,6 +488,7 @@ class AccountActivity : AppCompatActivity() {
                 remove("userData")
                 remove("userEmail")
                 remove("userRegionCount")
+                remove("CurrentSelectedRegion")
                 apply()
             }
             Log.d("AccountActivity", "sharedPreferences after clear, id: $currentUsrID | count: $currentUsrRegionCount")
@@ -557,7 +564,7 @@ class AccountActivity : AppCompatActivity() {
             }
         }
 
-        
+
 
         hideUi()
     }
@@ -860,7 +867,7 @@ class AccountActivity : AppCompatActivity() {
 
                 val newCurrentUsrRegionCount = sharedPreferencesForUser.getInt("userRegionCount", 0)
                 val editor = sharedPreferencesForUser.edit()
-                editor.putInt("userRegionCount", newCurrentUsrRegionCount + 1)
+                editor.putInt("userRegionCount", newCurrentUsrRegionCount - 1)
                 editor.apply()
             }
 

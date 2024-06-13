@@ -9,6 +9,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -120,7 +122,22 @@ class AuthActivity : AppCompatActivity() {
             finish()
         }
 
+        val showPasswordButton: ImageButton = findViewById(R.id.AuthShowPasswordButton)
+        val hidePasswordButton: ImageButton = findViewById(R.id.AuthHidePasswordButton)
 
+        showPasswordButton.setOnClickListener {
+            showPasswordButton.isVisible = false
+            hidePasswordButton.isVisible = true
+
+            inputPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+        }
+
+        hidePasswordButton.setOnClickListener {
+            hidePasswordButton.isVisible = false
+            showPasswordButton.isVisible = true
+
+            inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+        }
 
         //-----
         val buttonSkip: ImageButton = findViewById(R.id.skipButton)
@@ -226,6 +243,7 @@ class AuthActivity : AppCompatActivity() {
                             }
                         } ?: run {
                             Log.e("TAG", "Received null response")
+
                         }
                     }
                 } else {
