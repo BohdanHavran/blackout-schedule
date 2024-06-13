@@ -79,6 +79,32 @@
         app:layout_constraintTop_toTopOf="@+id/imageView12" />
 
     <ImageButton
+        android:id="@+id/AuthShowPasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/passwordInput"
+        app:layout_constraintEnd_toEndOf="@+id/imageView12"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@+id/imageView12"
+        app:layout_constraintTop_toTopOf="@+id/passwordInput"
+        app:layout_constraintVertical_bias="0.55"
+        app:srcCompat="@drawable/button_show_password" />
+
+    <ImageButton
+        android:id="@+id/AuthHidePasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/passwordInput"
+        app:layout_constraintEnd_toEndOf="@+id/imageView12"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="@+id/passwordInput"
+        app:layout_constraintTop_toTopOf="@+id/passwordInput"
+        app:layout_constraintVertical_bias="0.55"
+        app:srcCompat="@drawable/button_hide_password" />
+
+    <ImageButton
         android:id="@+id/registerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

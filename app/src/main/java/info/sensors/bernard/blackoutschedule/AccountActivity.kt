@@ -131,7 +131,7 @@ class AccountActivity : AppCompatActivity() {
         }
 
 
-        val addRegionButton: ImageButton = findViewById(R.id.AccAddRegionButton)
+        val addRegionButton: ImageButton = findViewById(R.id.AccEditRegionButton)
 
         val sharedPreferencesForUser = getSharedPreferences("CurrentUser", Context.MODE_PRIVATE)
         val currentUsrID = sharedPreferencesForUser.getString("userData", " ")
@@ -564,7 +564,7 @@ class AccountActivity : AppCompatActivity() {
             }
         }
 
-        
+
 
         hideUi()
     }

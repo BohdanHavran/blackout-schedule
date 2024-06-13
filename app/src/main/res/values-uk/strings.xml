@@ -31,4 +31,5 @@
     <string name="regions_button_next_text">Перейти далі</string>
     <string name="info_text">ЩО ТУТ РОБИТИ?</string>
     <string name="info_button_back_text">ДОПОБАЧЕННЯ</string>
+    <string name="account_button_add_text">Добавити</string>
 </resources>
